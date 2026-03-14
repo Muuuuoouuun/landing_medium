@@ -1,0 +1,52 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Pretendard', system-ui, -apple-system, sans-serif;
+    color: #1a2e25;
+    background-color: #f8faf9;
+  }
+}
+
+@layer components {
+  .section-prose {
+    @apply max-w-2xl;
+  }
+  .section-wrap {
+    @apply px-6 sm:px-10 lg:px-16 py-20 lg:py-28;
+  }
+  .content-col {
+    /* leaves room for right TOC on desktop */
+    @apply max-w-[720px];
+  }
+  .kicker {
+    @apply inline-block text-xs font-bold tracking-widest uppercase text-forest-700 bg-forest-50 border border-forest-100 rounded-full px-4 py-1.5 mb-5;
+  }
+  .display-xl {
+    @apply text-4xl sm:text-5xl lg:text-6xl font-black leading-[1.1] tracking-tight;
+  }
+  .display-lg {
+    @apply text-3xl sm:text-4xl lg:text-5xl font-black leading-[1.15] tracking-tight;
+  }
+  .display-md {
+    @apply text-2xl sm:text-3xl font-bold leading-snug;
+  }
+  .body-lg {
+    @apply text-lg sm:text-xl text-slate-600 leading-relaxed;
+  }
+  .btn-green {
+    @apply inline-flex items-center gap-2 bg-forest-700 text-white font-bold px-7 py-4 rounded-xl hover:bg-forest-600 transition-colors duration-200 shadow-lg;
+  }
+  .btn-ghost {
+    @apply inline-flex items-center gap-2 border-2 border-forest-700 text-forest-700 font-bold px-7 py-4 rounded-xl hover:bg-forest-50 transition-colors duration-200;
+  }
+  .card-outline {
+    @apply rounded-2xl border border-slate-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow;
+  }
+  .divider-green {
+    @apply w-12 h-1 bg-forest-700 rounded-full my-6;
+  }
+}
