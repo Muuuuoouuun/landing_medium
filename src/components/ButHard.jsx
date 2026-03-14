@@ -1,4 +1,5 @@
 import { AlertTriangle, Clock, Frown, MessageCircleWarning } from 'lucide-react'
+import { useScrollReveal, useStaggerReveal } from '../hooks/useScrollReveal'
 
 const pains = [
   {
@@ -24,19 +25,43 @@ const pains = [
 ]
 
 export default function ButHard() {
+  const [headerRef, headerVisible] = useScrollReveal()
+  const [quoteRef, quoteVisible] = useScrollReveal()
+  const [painsRef, painsVisible] = useStaggerReveal(4, { stagger: 150 })
+  const [brunerRef, brunerVisible] = useScrollReveal()
+  const [tensionRef, tensionVisible] = useScrollReveal()
+
   return (
-    <section id="hard" className="section-wrap" style={{background:'#f8faf9'}}>
+    <section id="hard" className="section-wrap section-transition" style={{background:'#f8faf9', '--next-bg':'#ffffff'}}>
       <div className="content-col">
-        <span className="kicker">챕터 02 — 현실의 벽</span>
+        <div ref={headerRef} className={`reveal ${headerVisible ? 'visible' : ''}`}>
+          <span className="kicker">챕터 02 — 현실의 벽</span>
 
-        <h2 className="display-lg text-slate-900 mb-6">
-          알면서도 못 한다.<br />
-          <span style={{color:'#0d6e4b'}}>관리의 딜레마.</span>
-        </h2>
+          <h2 className="display-lg text-slate-900 mb-6">
+            알면서도 못 한다.<br />
+            <span style={{color:'#0d6e4b'}}>관리의 딜레마.</span>
+          </h2>
 
-        <div className="divider-green" />
+          <div className="divider-green" />
+        </div>
 
-        <div className="space-y-5 body-lg mb-12">
+        {/* Knowles quote */}
+        <div ref={quoteRef} className={`reveal-left ${quoteVisible ? 'visible' : ''}`}>
+          <blockquote className="border-l-4 pl-6 py-2 mb-10" style={{borderColor:'#0d6e4b'}}>
+            <p className="text-lg font-semibold text-slate-800 italic leading-relaxed">
+              "성인 학습자에게는 이론이 아니라 실행 가능한 도구가 필요하다."
+            </p>
+            <footer className="text-sm text-slate-500 mt-3">
+              — 말콤 노울즈 (Malcolm Knowles), 성인교육학(Andragogy)의 창시자
+            </footer>
+            <p className="text-xs text-slate-400 mt-2 leading-relaxed">
+              원장님과 선생님도 마찬가지입니다. "관리해야 한다"는 교육만으로는 부족합니다.
+              실행할 수 있는 도구가 뒷받침되지 않으면, 아무리 좋은 의지도 좌절됩니다.
+            </p>
+          </blockquote>
+        </div>
+
+        <div className={`space-y-5 body-lg mb-12 reveal ${headerVisible ? 'visible' : ''}`}>
           <p>
             관리가 중요하다는 사실, 원장님은 이미 알고 있습니다.
             하지만 <strong className="text-slate-900">아는 것과 실행하는 것 사이엔 거대한 벽</strong>이 있습니다.
@@ -55,9 +80,9 @@ export default function ButHard() {
           </p>
         </div>
 
-        <div className="space-y-4">
-          {pains.map(p => (
-            <div key={p.title} className="flex gap-5 p-6 rounded-2xl bg-white border border-red-100 shadow-sm">
+        <div ref={painsRef} className="space-y-4">
+          {pains.map((p, i) => (
+            <div key={p.title} className={`flex gap-5 p-6 rounded-2xl bg-white border border-red-100 shadow-sm card-lift stagger-item ${painsVisible.has(i) ? 'visible' : ''}`}>
               <div className="w-11 h-11 rounded-xl bg-red-50 flex items-center justify-center flex-shrink-0 text-red-500 mt-0.5">
                 {p.icon}
               </div>
@@ -69,8 +94,21 @@ export default function ButHard() {
           ))}
         </div>
 
+        {/* Bruner quote */}
+        <div ref={brunerRef} className={`mt-8 rounded-2xl border border-slate-200 bg-white p-6 card-lift reveal-scale ${brunerVisible ? 'visible' : ''}`}>
+          <p className="text-sm text-slate-600 italic leading-relaxed">
+            "어떤 교과목이든, 지적으로 올바른 형태로 표현하면
+            어떤 발달 단계의 아이에게든 효과적으로 가르칠 수 있다."
+          </p>
+          <p className="text-xs text-slate-500 mt-2">— 제롬 브루너 (Jerome Bruner), 발견학습 이론</p>
+          <p className="text-xs text-slate-400 mt-2 leading-relaxed">
+            문제는 '관리를 할 수 있느냐'가 아닙니다.
+            관리를 <strong className="text-slate-600">'올바른 형태'</strong>로 실행할 도구가 있느냐입니다.
+          </p>
+        </div>
+
         {/* Tension builder */}
-        <div className="mt-12 p-6 rounded-2xl text-white" style={{background:'linear-gradient(135deg, #0a1f17, #0d2b1e)'}}>
+        <div ref={tensionRef} className={`mt-8 p-6 rounded-2xl text-white reveal-scale ${tensionVisible ? 'visible' : ''}`} style={{background:'linear-gradient(135deg, #0a1f17, #0d2b1e)'}}>
           <p className="text-lg font-semibold leading-relaxed">
             관리하지 않으면 학원이 성장하지 못하고,<br />
             관리하려면 시간과 시스템이 필요합니다.

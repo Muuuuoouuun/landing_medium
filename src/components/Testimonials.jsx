@@ -1,4 +1,6 @@
-import { Star, Quote, CheckCircle2, Zap, Heart } from 'lucide-react'
+import { useState, useEffect, useCallback } from 'react'
+import { Star, Quote, CheckCircle2, Zap, Heart, ChevronLeft, ChevronRight } from 'lucide-react'
+import { useScrollReveal, useStaggerReveal } from '../hooks/useScrollReveal'
 
 const reviews = [
   {
@@ -56,75 +58,125 @@ function StarRating({ count }) {
 }
 
 export default function Testimonials() {
+  const [currentReview, setCurrentReview] = useState(0)
+  const [headerRef, headerVisible] = useScrollReveal()
+  const [quoteRef, quoteVisible] = useScrollReveal()
+  const [empRef, empVisible] = useStaggerReveal(3, { stagger: 150 })
+  const [empowerRef, empowerVisible] = useScrollReveal()
+
+  // Auto-slide
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentReview(prev => (prev + 1) % reviews.length)
+    }, 5000)
+    return () => clearInterval(timer)
+  }, [])
+
+  const goTo = useCallback((idx) => {
+    setCurrentReview(idx)
+  }, [])
+
+  const r = reviews[currentReview]
+
   return (
-    <section id="testimonials" className="section-wrap bg-white">
+    <section id="testimonials" className="section-wrap bg-white relative overflow-hidden">
       <div className="content-col">
-        <span className="kicker">후기 — 먼저 도입한 원장님들</span>
+        <div ref={headerRef} className={`reveal ${headerVisible ? 'visible' : ''}`}>
+          <span className="kicker">후기 — 먼저 도입한 원장님들</span>
 
-        <h2 className="display-lg text-slate-900 mb-6">
-          이미 변화를 경험한<br />
-          <span style={{color:'#0d6e4b'}}>원장님들의 이야기.</span>
-        </h2>
+          <h2 className="display-lg text-slate-900 mb-6">
+            이미 변화를 경험한<br />
+            <span style={{color:'#0d6e4b'}}>원장님들의 이야기.</span>
+          </h2>
 
-        <div className="divider-green" />
+          <div className="divider-green" />
 
-        <p className="body-lg mb-12">
-          클래스인을 먼저 도입한 원장님들이 전하는 솔직한 후기입니다.
-        </p>
+          <p className="body-lg mb-12">
+            클래스인을 먼저 도입한 원장님들이 전하는 솔직한 후기입니다.
+          </p>
+        </div>
 
-        {/* Review Cards */}
-        <div className="space-y-5 mb-16">
-          {reviews.map(r => (
-            <div key={r.name} className="rounded-2xl border border-slate-100 bg-slate-50 p-6 hover:border-forest-200 transition-colors">
-              <div className="flex items-start gap-4 mb-4">
-                <div className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 text-white font-black text-lg" style={{background:'linear-gradient(135deg, #0d6e4b, #10b981)'}}>
-                  {r.name[0]}
-                </div>
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <span className="font-bold text-slate-900">{r.name}</span>
-                    <StarRating count={r.stars} />
-                  </div>
-                  <p className="text-xs text-slate-500 mt-0.5">{r.academy} · {r.period}</p>
-                </div>
-                <span className="text-xs font-bold px-3 py-1 rounded-full whitespace-nowrap" style={{background:'#f0fdf4', color:'#0d6e4b', border:'1px solid #d1fae5'}}>
-                  {r.highlight}
-                </span>
+        {/* Carousel Review Card */}
+        <div className="relative mb-8">
+          <div className="rounded-2xl border border-slate-100 bg-slate-50 p-8 transition-all duration-500 card-lift" style={{minHeight: 220}}>
+            <div className="flex items-start gap-4 mb-5">
+              <div className="w-14 h-14 rounded-full flex items-center justify-center flex-shrink-0 text-white font-black text-xl" style={{background:'linear-gradient(135deg, #0d6e4b, #10b981)'}}>
+                {r.name[0]}
               </div>
-
-              <div className="relative pl-4" style={{borderLeft:'3px solid #e2e8f0'}}>
-                <Quote size={16} className="absolute -left-2 -top-1 bg-slate-50 text-slate-300" />
-                <p className="text-sm text-slate-600 leading-relaxed">
-                  {r.text}
-                </p>
+              <div className="flex-1">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="font-bold text-slate-900 text-lg">{r.name}</span>
+                  <StarRating count={r.stars} />
+                </div>
+                <p className="text-xs text-slate-500 mt-1">{r.academy} · {r.period}</p>
               </div>
+              <span className="text-xs font-bold px-3 py-1.5 rounded-full whitespace-nowrap animate-glow-pulse" style={{background:'#f0fdf4', color:'#0d6e4b', border:'1px solid #d1fae5'}}>
+                {r.highlight}
+              </span>
             </div>
-          ))}
+
+            <div className="relative pl-5" style={{borderLeft:'3px solid #d1fae5'}}>
+              <Quote size={18} className="absolute -left-3 -top-1 bg-slate-50 text-forest-200" />
+              <p className="text-base text-slate-600 leading-relaxed">
+                {r.text}
+              </p>
+            </div>
+          </div>
+
+          {/* Navigation */}
+          <div className="flex items-center justify-between mt-4">
+            <button onClick={() => goTo((currentReview - 1 + reviews.length) % reviews.length)}
+              className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center hover:bg-slate-200 transition-colors">
+              <ChevronLeft size={18} className="text-slate-600" />
+            </button>
+
+            <div className="flex gap-2">
+              {reviews.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => goTo(i)}
+                  className="transition-all duration-300 rounded-full"
+                  style={{
+                    width: i === currentReview ? 24 : 8,
+                    height: 8,
+                    background: i === currentReview ? '#0d6e4b' : '#e2e8f0',
+                  }}
+                />
+              ))}
+            </div>
+
+            <button onClick={() => goTo((currentReview + 1) % reviews.length)}
+              className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center hover:bg-slate-200 transition-colors">
+              <ChevronRight size={18} className="text-slate-600" />
+            </button>
+          </div>
         </div>
 
         {/* Educator Quote — Paulo Freire */}
-        <blockquote className="border-l-4 pl-6 py-2 mb-16" style={{borderColor:'#0d6e4b'}}>
-          <p className="text-lg font-semibold text-slate-800 italic leading-relaxed">
-            "교육의 목적은 현실을 변화시킬 수 있다는 믿음을 심어주는 것이다."
-          </p>
-          <footer className="text-sm text-slate-500 mt-3">
-            — 파울로 프레이리 (Paulo Freire), 교육학자
-          </footer>
-          <p className="text-xs text-slate-400 mt-2 leading-relaxed">
-            관리형 수업은 학생에게 "나도 할 수 있다"는 경험을 반복적으로 선물합니다.
-            그 경험이 쌓이면, 학생은 스스로 공부하는 사람이 됩니다.
-          </p>
-        </blockquote>
+        <div ref={quoteRef} className={`reveal-left ${quoteVisible ? 'visible' : ''}`}>
+          <blockquote className="border-l-4 pl-6 py-2 mb-16" style={{borderColor:'#0d6e4b'}}>
+            <p className="text-lg font-semibold text-slate-800 italic leading-relaxed">
+              "교육의 목적은 현실을 변화시킬 수 있다는 믿음을 심어주는 것이다."
+            </p>
+            <footer className="text-sm text-slate-500 mt-3">
+              — 파울로 프레이리 (Paulo Freire), 교육학자
+            </footer>
+            <p className="text-xs text-slate-400 mt-2 leading-relaxed">
+              관리형 수업은 학생에게 "나도 할 수 있다"는 경험을 반복적으로 선물합니다.
+              그 경험이 쌓이면, 학생은 스스로 공부하는 사람이 됩니다.
+            </p>
+          </blockquote>
+        </div>
 
         {/* "나도 할 수 있다" Empowerment Section */}
-        <div className="rounded-2xl p-8 text-white" style={{background:'linear-gradient(160deg, #020f08 0%, #0a1f17 55%, #0d2b1e 100%)'}}>
+        <div ref={empowerRef} className={`rounded-2xl p-8 text-white reveal-scale ${empowerVisible ? 'visible' : ''}`} style={{background:'linear-gradient(160deg, #020f08 0%, #0a1f17 55%, #0d2b1e 100%)'}}>
           <div className="text-center mb-8">
             <p className="text-xs font-bold tracking-[0.2em] uppercase mb-3" style={{color:'#34d399'}}>
               나도 할 수 있다
             </p>
             <h3 className="text-2xl sm:text-3xl font-black leading-tight mb-3">
               복잡한 관리 시스템,<br />
-              <span style={{color:'#34d399'}}>우리 학원도 할 수 있을까?</span>
+              <span className="gradient-text">우리 학원도 할 수 있을까?</span>
             </h3>
             <p className="text-slate-300 text-base leading-relaxed max-w-lg mx-auto">
               할 수 있습니다. 아니, 클래스인은 원장님이 "하지 않아도 되게" 만들어졌습니다.
@@ -132,9 +184,9 @@ export default function Testimonials() {
             </p>
           </div>
 
-          <div className="grid sm:grid-cols-3 gap-4">
-            {empowerments.map(e => (
-              <div key={e.title} className="rounded-xl p-5 bg-white/[0.06] border border-white/10">
+          <div ref={empRef} className="grid sm:grid-cols-3 gap-4">
+            {empowerments.map((e, i) => (
+              <div key={e.title} className={`rounded-xl p-5 glass card-lift stagger-item ${empVisible.has(i) ? 'visible' : ''}`}>
                 <div className="w-10 h-10 rounded-lg flex items-center justify-center mb-3" style={{background:'rgba(13,110,75,0.3)', color:'#34d399'}}>
                   {e.icon}
                 </div>
@@ -155,6 +207,26 @@ export default function Testimonials() {
             </p>
           </div>
         </div>
+      </div>
+
+      {/* SVG Wave divider → Planning (dark) section */}
+      <div className="absolute bottom-0 left-0 right-0 pointer-events-none" style={{height: '100px'}}>
+        <svg
+          viewBox="0 0 1440 120"
+          preserveAspectRatio="none"
+          className="absolute bottom-0 left-0 w-full"
+          style={{height: '100px'}}
+        >
+          <path
+            d="M0,40 C240,100 480,20 720,60 C960,100 1200,30 1440,50 L1440,120 L0,120 Z"
+            fill="#020f08"
+          />
+          <path
+            d="M0,70 C180,40 360,90 540,55 C720,20 900,80 1080,50 C1260,30 1380,70 1440,60 L1440,120 L0,120 Z"
+            fill="#020f08"
+            opacity="0.6"
+          />
+        </svg>
       </div>
     </section>
   )

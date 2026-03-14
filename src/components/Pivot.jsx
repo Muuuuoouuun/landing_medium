@@ -1,4 +1,5 @@
 import { Sparkles, ArrowRight } from 'lucide-react'
+import { useScrollReveal } from '../hooks/useScrollReveal'
 
 const before = [
   '수업 후 녹화 파일을 수동으로 업로드',
@@ -16,46 +17,56 @@ const after = [
 ]
 
 export default function Pivot() {
+  const [headerRef, headerVisible] = useScrollReveal()
+  const [marzanoRef, marzanoVisible] = useScrollReveal()
+  const [compareRef, compareVisible] = useScrollReveal()
+  const [dweckRef, dweckVisible] = useScrollReveal()
+  const [ctaRef, ctaVisible] = useScrollReveal()
+
   return (
-    <section id="pivot" className="section-wrap" style={{background:'#f0fdf4'}}>
+    <section id="pivot" className="section-wrap section-transition" style={{background:'#f0fdf4', '--next-bg':'#ffffff'}}>
       <div className="content-col">
-        <span className="kicker">챕터 04 — HOW: 어떻게 해결하는가</span>
+        <div ref={headerRef} className={`reveal ${headerVisible ? 'visible' : ''}`}>
+          <span className="kicker">챕터 04 — HOW: 어떻게 해결하는가</span>
 
-        <h2 className="display-lg text-slate-900 mb-6">
-          시스템을 바꾸면<br />
-          <span style={{color:'#0d6e4b'}}>관리가 자동이 됩니다.</span>
-        </h2>
+          <h2 className="display-lg text-slate-900 mb-6">
+            시스템을 바꾸면<br />
+            <span style={{color:'#0d6e4b'}}>관리가 자동이 됩니다.</span>
+          </h2>
 
-        <div className="divider-green" />
+          <div className="divider-green" />
 
-        <div className="space-y-5 body-lg mb-8">
-          <p>
-            관리가 힘든 이유는 <strong className="text-slate-900">도구가 관리를 위해 만들어지지 않았기 때문</strong>입니다.
-            줌은 회의용, 구글 드라이브는 파일 공유용, 엑셀은 데이터 분석용입니다.
-            이것들을 억지로 엮어서 쓰니 불편할 수밖에 없습니다.
-          </p>
-          <p>
-            처음부터 <em className="not-italic font-semibold text-slate-900">학원의 수업 관리만을 위해 설계된 시스템</em>이라면 어떨까요?
-            녹화, 필기 공유, 숙제 관리, 학부모 알림이 하나의 흐름으로 연결된다면?
-          </p>
+          <div className="space-y-5 body-lg mb-8">
+            <p>
+              관리가 힘든 이유는 <strong className="text-slate-900">도구가 관리를 위해 만들어지지 않았기 때문</strong>입니다.
+              줌은 회의용, 구글 드라이브는 파일 공유용, 엑셀은 데이터 분석용입니다.
+              이것들을 억지로 엮어서 쓰니 불편할 수밖에 없습니다.
+            </p>
+            <p>
+              처음부터 <em className="not-italic font-semibold text-slate-900">학원의 수업 관리만을 위해 설계된 시스템</em>이라면 어떨까요?
+              녹화, 필기 공유, 숙제 관리, 학부모 알림이 하나의 흐름으로 연결된다면?
+            </p>
+          </div>
         </div>
 
-        {/* Educational Theory — Marzano */}
-        <blockquote className="border-l-4 pl-6 py-2 mb-12" style={{borderColor:'#0d6e4b'}}>
-          <p className="text-lg font-semibold text-slate-800 italic leading-relaxed">
-            "형성평가와 즉각적 피드백이 있는 교실에서, 학생의 성취도는 26 퍼센타일 상승한다."
-          </p>
-          <footer className="text-sm text-slate-500 mt-3">
-            — 로버트 마르자노 (Robert Marzano), 교육 효과성 연구
-          </footer>
-          <p className="text-xs text-slate-400 mt-2 leading-relaxed">
-            시스템이 형성평가와 피드백을 자동화하면, 선생님은 가르치는 것에만 집중할 수 있습니다.
-          </p>
-        </blockquote>
+        {/* Marzano quote */}
+        <div ref={marzanoRef} className={`reveal-left ${marzanoVisible ? 'visible' : ''}`}>
+          <blockquote className="border-l-4 pl-6 py-2 mb-12" style={{borderColor:'#0d6e4b'}}>
+            <p className="text-lg font-semibold text-slate-800 italic leading-relaxed">
+              "형성평가와 즉각적 피드백이 있는 교실에서, 학생의 성취도는 26 퍼센타일 상승한다."
+            </p>
+            <footer className="text-sm text-slate-500 mt-3">
+              — 로버트 마르자노 (Robert Marzano), 교육 효과성 연구
+            </footer>
+            <p className="text-xs text-slate-400 mt-2 leading-relaxed">
+              시스템이 형성평가와 피드백을 자동화하면, 선생님은 가르치는 것에만 집중할 수 있습니다.
+            </p>
+          </blockquote>
+        </div>
 
         {/* Before / After */}
-        <div className="grid sm:grid-cols-[1fr_auto_1fr] gap-4 items-start">
-          <div className="rounded-2xl border border-red-100 bg-white p-5">
+        <div ref={compareRef} className={`grid sm:grid-cols-[1fr_auto_1fr] gap-4 items-start reveal-scale ${compareVisible ? 'visible' : ''}`}>
+          <div className="rounded-2xl border border-red-100 bg-white p-5 card-lift">
             <div className="text-xs font-bold text-red-500 uppercase tracking-widest mb-4">지금까지</div>
             <ul className="space-y-3">
               {before.map(item => (
@@ -71,7 +82,7 @@ export default function Pivot() {
             <ArrowRight size={28} style={{color:'#0d6e4b'}} />
           </div>
 
-          <div className="rounded-2xl border p-5" style={{borderColor:'#0d6e4b', background:'#f0fdf4'}}>
+          <div className="rounded-2xl border p-5 card-lift" style={{borderColor:'#0d6e4b', background:'#f0fdf4'}}>
             <div className="text-xs font-bold uppercase tracking-widest mb-4" style={{color:'#0d6e4b'}}>클래스인으로</div>
             <ul className="space-y-3">
               {after.map(item => (
@@ -84,8 +95,8 @@ export default function Pivot() {
           </div>
         </div>
 
-        {/* Carol Dweck — Growth Mindset */}
-        <div className="mt-10 rounded-2xl border border-forest-200 bg-white p-6">
+        {/* Carol Dweck */}
+        <div ref={dweckRef} className={`mt-10 rounded-2xl border border-forest-200 bg-white p-6 card-lift reveal ${dweckVisible ? 'visible' : ''}`}>
           <div className="flex items-start gap-4">
             <div className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style={{background:'#f0fdf4', color:'#0d6e4b'}}>
               <Sparkles size={20} />
@@ -105,7 +116,7 @@ export default function Pivot() {
           </div>
         </div>
 
-        <div className="mt-6 p-6 rounded-2xl text-white" style={{background:'linear-gradient(135deg, #0d6e4b, #0f8a5e)'}}>
+        <div ref={ctaRef} className={`mt-6 p-6 rounded-2xl text-white reveal-scale ${ctaVisible ? 'visible' : ''}`} style={{background:'linear-gradient(135deg, #0d6e4b, #0f8a5e)'}}>
           <div className="flex items-start gap-4">
             <Sparkles size={24} className="flex-shrink-0 mt-0.5" />
             <div>
