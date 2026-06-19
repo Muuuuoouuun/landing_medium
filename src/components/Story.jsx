@@ -1,5 +1,6 @@
 import { TrendingUp, Clock, SmilePlus } from 'lucide-react'
 import { useScrollReveal, useStaggerReveal } from '../hooks/useScrollReveal'
+import WaveDivider from './WaveDivider'
 
 export default function Story() {
   const [headerRef, headerVisible] = useScrollReveal()
@@ -158,15 +159,8 @@ export default function Story() {
         </div>
       </div>
 
-      {/* Angled divider → Pivot section */}
-      <div
-        className="absolute bottom-0 left-0 right-0"
-        style={{
-          height: '70px',
-          background: '#f0fdf4',
-          clipPath: 'polygon(0 100%, 100% 30%, 100% 100%)',
-        }}
-      />
+      {/* Subtle wave divider → Pivot (light #f0fdf4) */}
+      <WaveDivider fill="#f0fdf4" />
     </section>
   )
 }

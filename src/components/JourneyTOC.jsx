@@ -7,9 +7,10 @@ const chapters = [
   { id: 'story',         num: '04', label: '원장님의 하루' },
   { id: 'pivot',         num: '05', label: 'HOW — 전환점' },
   { id: 'solution',      num: '06', label: 'WHAT — 클래스인' },
-  { id: 'features',      num: '07', label: '도입 프로세스' },
-  { id: 'testimonials',  num: '08', label: '후기' },
-  { id: 'planning',      num: '09', label: '지금 시작하기' },
+  { id: 'simulation',    num: '07', label: '내 학원에 적용하면' },
+  { id: 'features',      num: '08', label: '도입 프로세스' },
+  { id: 'testimonials',  num: '09', label: '후기' },
+  { id: 'planning',      num: '10', label: '지금 시작하기' },
 ]
 
 export default function JourneyTOC() {

@@ -17,6 +17,13 @@ const planOptions = [
     desc: '실제 클래스인 플랫폼을 원장님이 직접 체험해 보실 수 있습니다. 도입 전 확신을 가질 수 있습니다.',
     items: ['30분 라이브 데모', '강사/학생 화면 시연', 'Q&A', '현장 방문 또는 화상'],
   },
+  {
+    id: 'pilot',
+    title: '한 반 먼저 적용',
+    badge: '부담 ZERO',
+    desc: '중등부 한 반만 먼저 적용해 결석 보강·녹화·상담 근거 흐름을 직접 확인합니다. 학원 전체를 한 번에 바꿀 필요가 없습니다.',
+    items: ['중등부 한 반 파일럿', '결석 보강 흐름 진단', '2주 밀착 지원', '확인 후 확대 결정'],
+  },
 ]
 
 export default function Planning() {
@@ -24,6 +31,9 @@ export default function Planning() {
   const [submitted, setSubmitted] = useState(false)
   const [headerRef, headerVisible] = useScrollReveal()
   const [formRef, formVisible] = useScrollReveal()
+
+  const planLabels = { consult: '무료 상담', demo: '데모 체험', pilot: '한 반 먼저 적용' }
+  const currentLabel = planLabels[form.plan] || '무료 상담'
 
   const handleChange = e => setForm({ ...form, [e.target.name]: e.target.value })
 
@@ -54,7 +64,7 @@ export default function Planning() {
           </p>
         </div>
 
-        <div className="grid sm:grid-cols-2 gap-4 mb-10">
+        <div className="grid sm:grid-cols-3 gap-4 mb-10">
           {planOptions.map(plan => (
             <button
               key={plan.id}
@@ -98,7 +108,7 @@ export default function Planning() {
           ) : (
             <form onSubmit={handleSubmit} className="bg-white rounded-2xl p-7 sm:p-8 shadow-2xl">
               <h3 className="font-bold text-lg text-slate-900 mb-6">
-                {form.plan === 'consult' ? '무료 상담 신청' : '데모 체험 신청'}
+                {currentLabel} 신청
               </h3>
 
               <div className="grid sm:grid-cols-2 gap-4 mb-4">
@@ -158,7 +168,7 @@ export default function Planning() {
                 style={{background:'#0d6e4b'}}
               >
                 <Send size={18} />
-                {form.plan === 'consult' ? '무료 상담 신청하기' : '데모 체험 신청하기'}
+                {currentLabel} 신청하기
               </button>
 
               <p className="text-xs text-slate-400 text-center mt-4">

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Video, PenLine, ClipboardCheck, Bell, Layers, Shield } from 'lucide-react'
 import { useScrollReveal, useStaggerReveal } from '../hooks/useScrollReveal'
+import WaveDivider from './WaveDivider'
 
 const features = [
   {
@@ -62,7 +63,7 @@ export default function Solution() {
   const active = features[activeIdx]
 
   return (
-    <section id="solution" className="bg-white section-wrap">
+    <section id="solution" className="bg-white section-wrap relative overflow-hidden">
       <div className="content-col">
         <div ref={headerRef} className={`reveal ${headerVisible ? 'visible' : ''}`}>
           <span className="kicker">챕터 05 — WHAT: 클래스인</span>
@@ -156,6 +157,9 @@ export default function Solution() {
           </p>
         </div>
       </div>
+
+      {/* Wave divider → Simulation (dark, top #010a05) */}
+      <WaveDivider fill="#010a05" />
     </section>
   )
 }

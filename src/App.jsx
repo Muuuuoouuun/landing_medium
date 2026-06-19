@@ -1,11 +1,14 @@
 import { useState, useEffect } from 'react'
 import JourneyTOC from './components/JourneyTOC'
 import Opening from './components/Opening'
+import ManageThree from './components/ManageThree'
 import Essential from './components/Essential'
 import ButHard from './components/ButHard'
 import Story from './components/Story'
 import Pivot from './components/Pivot'
 import Solution from './components/Solution'
+import Simulation from './components/Simulation'
+import MidCTA from './components/MidCTA'
 import HowItWorks from './components/HowItWorks'
 import Testimonials from './components/Testimonials'
 import Planning from './components/Planning'
@@ -51,11 +54,14 @@ export default function App() {
       <JourneyTOC />
       <main>
         <Opening />
+        <ManageThree />
         <Essential />
         <ButHard />
         <Story />
         <Pivot />
         <Solution />
+        <Simulation />
+        <MidCTA />
         <HowItWorks />
         <Testimonials />
         <Planning />

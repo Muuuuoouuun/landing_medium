@@ -207,29 +207,7 @@ export default function Opening() {
         }}
       />
 
-      {/* ═══════════════════════════════════
-          LAYER 8 — SVG Wave transition to next section
-          ═══════════════════════════════════ */}
-      <div className="absolute bottom-0 left-0 right-0 pointer-events-none" style={{height: '120px'}}>
-        {/* Gradient fade before wave */}
-        <div className="absolute inset-0" style={{background: 'linear-gradient(to bottom, transparent 0%, rgba(1,10,5,0.3) 100%)'}} />
-        <svg
-          viewBox="0 0 1440 120"
-          preserveAspectRatio="none"
-          className="absolute bottom-0 left-0 w-full"
-          style={{height: '100px'}}
-        >
-          <path
-            d="M0,64 C180,110 360,20 540,60 C720,100 900,30 1080,70 C1200,95 1350,45 1440,58 L1440,120 L0,120 Z"
-            fill="#ffffff"
-          />
-          <path
-            d="M0,80 C200,100 400,50 600,75 C800,100 1000,55 1200,78 C1350,92 1420,65 1440,72 L1440,120 L0,120 Z"
-            fill="#ffffff"
-            opacity="0.5"
-          />
-        </svg>
-      </div>
+      {/* Opening → ManageThree is dark→dark: no divider, blend seamlessly. */}
 
       {/* ═══════════════════════════════════
           CONTENT
@@ -261,8 +239,11 @@ export default function Opening() {
             성적이 오르는 학원과 그냥 다니는 학원의 차이.
             그것은 교재도, 강사의 실력도 아닙니다.
           </p>
-          <p className={`text-xl text-forest-400 font-semibold leading-relaxed max-w-xl mb-12 transition-all duration-700 delay-700 ${loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>
+          <p className={`text-xl text-forest-400 font-semibold leading-relaxed max-w-xl mb-6 transition-all duration-700 delay-700 ${loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>
             그것은 <strong className="text-white">관리</strong>입니다.
+          </p>
+          <p className={`text-base text-slate-400 leading-relaxed max-w-xl mb-12 transition-all duration-700 delay-[800ms] ${loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>
+            관리란, 원장님이 매번 챙기지 않아도 — <span className="text-slate-200 font-medium">수업·보강·근거가 저절로 남는 것</span>입니다.
           </p>
 
           <div className={`flex items-center gap-4 transition-all duration-700 delay-[900ms] ${loaded ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>
@@ -273,7 +254,7 @@ export default function Opening() {
             </a>
             <a href="#planning" className="text-slate-400 text-sm font-medium hover:text-white transition-colors underline underline-offset-4"
               onClick={e => { e.preventDefault(); document.getElementById('planning')?.scrollIntoView({ behavior: 'smooth' }) }}>
-              바로 도입 문의 →
+              결석 보강 흐름 진단받기 →
             </a>
           </div>
         </div>
