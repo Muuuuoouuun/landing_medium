@@ -1,0 +1,2 @@
+JetBrains Mono (latin 400/700, via @fontsource/jetbrains-mono 5.x) — SIL Open Font License 1.1
+https://github.com/JetBrains/JetBrainsMono

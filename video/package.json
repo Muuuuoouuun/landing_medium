@@ -1,0 +1,32 @@
+{
+  "name": "classin-solo-15s",
+  "private": true,
+  "version": "0.1.0",
+  "description": "ClassIn 15s cinematic kinetic-typography commercial for solo academy directors (1인 원장)",
+  "scripts": {
+    "studio": "remotion studio src/index.ts",
+    "animatic": "remotion render src/index.ts Animatic out/animatic.mp4",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.533",
+    "@remotion/fonts": "4.0.533",
+    "@remotion/layout-utils": "4.0.533",
+    "@remotion/light-leaks": "4.0.533",
+    "@remotion/media-utils": "4.0.533",
+    "@remotion/motion-blur": "4.0.533",
+    "@remotion/noise": "4.0.533",
+    "@remotion/paths": "4.0.533",
+    "@remotion/shapes": "4.0.533",
+    "@remotion/starburst": "4.0.533",
+    "@remotion/transitions": "4.0.533",
+    "pretendard": "^1.3.9",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "remotion": "4.0.533"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.31",
+    "typescript": "^5.9.3"
+  }
+}
