@@ -70,10 +70,10 @@ export const Finale: React.FC = () => {
       <AbsoluteFill style={{justifyContent: 'center', alignItems: 'center', paddingTop: 230}}>
         <div
           style={{
-            fontFamily: font.sans,
+            fontFamily: font.brand,
             fontSize: 230,
-            fontWeight: 900,
-            letterSpacing: '-0.055em',
+            fontWeight: 800,
+            letterSpacing: '-0.035em',
             lineHeight: 1.05,
             clipPath: `inset(-10% ${(1 - logo) * 100}% -10% 0)`,
             transform: `scale(${1.12 - 0.12 * logo})`,

@@ -33,6 +33,8 @@ export const AI_GRADIENT = `linear-gradient(90deg, ${color.greenBright}, ${color
 export const font = {
   sans: 'Pretendard, system-ui, sans-serif',
   mono: '"JetBrains Mono", ui-monospace, monospace',
+  /** End-card wordmark: Gilroy when its licensed file is in public/fonts, else Plus Jakarta Sans. */
+  brand: 'Gilroy, "Plus Jakarta Sans", Pretendard, sans-serif',
 } as const;
 
 export const cardStyle: CSSProperties = {

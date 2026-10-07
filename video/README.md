@@ -33,4 +33,5 @@ audio/
 ```
 
 - 폰트는 `public/fonts`에 포함되어 있어 렌더 시 외부 폰트 CDN에 의존하지 않습니다.
+- 엔딩 ClassIn 워드마크는 Gilroy입니다. 유료 폰트라 포함하지 않았으니, 라이선스 파일(예: `Gilroy-ExtraBold.otf`)을 `public/fonts/`에 넣고 `npm run render`만 다시 하면 적용됩니다. 파일이 없으면 Plus Jakarta Sans ExtraBold로 대체됩니다.
 - Remotion은 직원 4인 이상 회사가 상업적으로 쓰면 컴퍼니 라이선스가 필요합니다: https://remotion.dev/license

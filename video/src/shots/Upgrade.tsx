@@ -11,18 +11,28 @@ import {AI_GRADIENT, cardStyle, color, font} from '../theme';
 /** Local frames where v1.0, v2.0 and v3.0 land (shared with the soundtrack via script marks). */
 const MARKS = getShot('S11').marks ?? {v1: 4, v2: 20, v3: 40};
 const STEPS = [MARKS.v1, MARKS.v2, MARKS.v3];
-const NODES = [
-  {x: 380, y: 930},
-  {x: 930, y: 790},
-  {x: 1480, y: 625},
-];
-const NEXT_NODE = {x: 1880, y: 505};
+/**
+ * Growth follows a true exponential, y = base − a·(e^{k·(x − x0)} − 1): nearly flat at v1.0,
+ * bending at v2.0, and shooting off the top-right corner after v3.0.
+ */
+const GROWTH = {x0: 90, base: 990, a: 32.4, k: 0.00188};
+const growthY = (x: number) => GROWTH.base - GROWTH.a * (Math.exp(GROWTH.k * (x - GROWTH.x0)) - 1);
+const curve = (x0: number, x1: number, steps = 32) =>
+  Array.from({length: steps + 1}, (_, i) => {
+    const x = x0 + ((x1 - x0) * i) / steps;
+    return `${i === 0 ? 'M' : 'L'} ${x.toFixed(1)} ${growthY(x).toFixed(1)}`;
+  }).join(' ');
+
+const NODES = [420, 980, 1440].map((x) => ({x, y: growthY(x)}));
+/** Cards sit up-left of their node so the steep part of the curve stays in view. */
+const CARD_DX = [0, -60, -150];
 const BASELINE = 1010;
 const TINTS = [color.greenBright, color.cyan, color.blue];
 
+// Scores climb faster each step (▲11, ▲18) so the numbers tell the same exponential story as the curve.
 const VERSIONS = [
-  {v: 'v1.0', score: 72, note: '기본 강의안', weight: 420},
-  {v: 'v2.0', score: 86, note: '+ 질문 타이밍', weight: 650},
+  {v: 'v1.0', score: 68, note: '기본 강의안', weight: 420},
+  {v: 'v2.0', score: 79, note: '+ 질문 타이밍', weight: 650},
   {v: 'v3.0', score: 97, note: '+ 예시 추가 · 속도 조절', weight: 900},
 ];
 
@@ -34,14 +44,17 @@ const FEEDBACK = [
 
 /** Growth line, drawn one segment per upgrade; `NEXT` is the dashed promise of the next version. */
 const SEGMENTS = [
-  {d: 'M 90 985 C 200 978, 290 955, 380 930', draw: [0, STEPS[0] + 2]},
-  {d: 'M 380 930 C 560 885, 750 840, 930 790', draw: [STEPS[1] - 10, STEPS[1]]},
-  {d: 'M 930 790 C 1110 740, 1300 690, 1480 625', draw: [STEPS[2] - 12, STEPS[2]]},
+  {d: curve(GROWTH.x0, NODES[0].x, 12), draw: [0, STEPS[0] + 2]},
+  {d: curve(NODES[0].x, NODES[1].x), draw: [STEPS[1] - 10, STEPS[1]]},
+  {d: curve(NODES[1].x, NODES[2].x), draw: [STEPS[2] - 12, STEPS[2]]},
 ];
-const FULL_PATH = SEGMENTS.map((seg, i) => (i === 0 ? seg.d : seg.d.replace(/^M [\d.]+ [\d.]+ /, ''))).join(' ');
+const FULL_PATH = SEGMENTS.map((seg, i) => (i === 0 ? seg.d : seg.d.replace(/^M /, 'L '))).join(' ');
 const SEGMENT_LENGTHS = SEGMENTS.map((seg) => getLength(seg.d));
 const FULL_LENGTH = getLength(FULL_PATH);
-const NEXT = 'M 1480 625 C 1610 580, 1740 540, 1880 505';
+// Past v3.0 the curve keeps going, steeper, out through the top-right corner.
+const NEXT = curve(NODES[2].x, 1960, 40);
+/** Where the "next version" tag sits: just left of the line near the top edge. */
+const NEXT_TAG = {x: 1600, y: 34};
 const SPARKLE = 'M 0 -14 L 3.5 -3.5 L 14 0 L 3.5 3.5 L 0 14 L -3.5 3.5 L -14 0 L -3.5 -3.5 Z';
 
 const landSpring = (frame: number, fps: number, at: number) =>
@@ -101,7 +114,7 @@ const VersionCard: React.FC<{i: number}> = ({i}) => {
     <div
       style={{
         position: 'absolute',
-        left: node.x - w / 2,
+        left: node.x - w / 2 + CARD_DX[i],
         top: node.y - 44 - h,
         width: w,
         height: h,
@@ -294,16 +307,17 @@ export const Upgrade: React.FC = () => {
   const level = (landSpring(frame, fps, STEPS[1]) + landSpring(frame, fps, STEPS[2])) / 2;
 
   // Camera drifts up and to the right with the climb.
-  const push = interpolate(frame, [0, durationInFrames], [1, 1.045]);
+  const push = interpolate(frame, [0, durationInFrames], [1, 1.05]);
   const punch = STEPS.slice(1).reduce((sum, s) => sum + interpolate(frame, [s, s + 1, s + 9], [0, 0.014, 0], CLAMP), 0);
-  const driftX = interpolate(frame, [0, 56], [40, -40], {...CLAMP, easing: EASE_IO});
-  const driftY = interpolate(frame, [0, 56], [24, -30], {...CLAMP, easing: EASE_IO});
+  // The camera tilts up and right after the curve as it takes off.
+  const driftX = interpolate(frame, [0, 56], [30, -30], {...CLAMP, easing: EASE_IO});
+  const driftY = interpolate(frame, [0, 56], [-10, 28], {...CLAMP, easing: EASE_IO});
   const exit = ramp(frame, durationInFrames - 6, durationInFrames, EASE_IN);
   const next = ramp(frame, STEPS[2] + 6, STEPS[2] + 16, EASE_IO);
 
   return (
     <AbsoluteFill style={{opacity: 1 - exit, filter: exit > 0 ? `blur(${exit * 14}px)` : undefined, transform: `scale(${1 + exit * 0.06})`}}>
-      <AbsoluteFill style={{transform: `translate(${driftX}px, ${driftY}px) scale(${push + punch})`, transformOrigin: '60% 70%'}}>
+      <AbsoluteFill style={{transform: `translate(${driftX}px, ${driftY}px) scale(${push + punch})`, transformOrigin: '75% 40%'}}>
         <svg width={1920} height={1080} style={{position: 'absolute', inset: 0, overflow: 'visible'}}>
           <defs>
             <linearGradient id="climb-line" gradientUnits="userSpaceOnUse" x1={90} y1={0} x2={1850} y2={0}>
@@ -319,7 +333,7 @@ export const Upgrade: React.FC = () => {
             ))}
           </defs>
 
-          {[680, 820, 950].map((y) => (
+          {[430, 600, 770, 940].map((y) => (
             <line key={y} x1={60} x2={1860} y1={y} y2={y} stroke={color.line} strokeWidth={2} strokeDasharray="4 12" />
           ))}
           <line x1={60} x2={1860} y1={BASELINE} y2={BASELINE} stroke="#D3DBD6" strokeWidth={2} />
@@ -389,24 +403,26 @@ export const Upgrade: React.FC = () => {
           })}
         </svg>
 
-        {/* The next version, already on its way. */}
+        {/* The next version, already on its way up. */}
         <div
           style={{
             position: 'absolute',
-            left: NEXT_NODE.x - 150,
-            top: NEXT_NODE.y - 44 - 180,
-            width: 300,
-            height: 180,
-            borderRadius: 24,
+            left: NEXT_TAG.x,
+            top: NEXT_TAG.y,
+            display: 'flex',
+            alignItems: 'baseline',
+            gap: 12,
+            padding: '10px 20px',
+            borderRadius: 18,
             border: `3px dashed ${color.blue}`,
-            background: 'rgba(255,255,255,0.4)',
-            opacity: 0.75 * ramp(frame, STEPS[2] + 10, STEPS[2] + 17),
+            background: 'rgba(255,255,255,0.55)',
+            opacity: 0.85 * ramp(frame, STEPS[2] + 10, STEPS[2] + 17),
             transform: `translateY(${(1 - ramp(frame, STEPS[2] + 10, STEPS[2] + 17)) * 24}px)`,
-            padding: '20px 24px',
+            whiteSpace: 'nowrap',
           }}
         >
-          <div style={{fontFamily: font.sans, fontSize: 22, fontWeight: 700, color: color.mute}}>다음 수업</div>
-          <div style={{fontFamily: font.sans, fontSize: 76, fontWeight: 300, letterSpacing: '-0.05em', color: color.blue}}>v4.0</div>
+          <span style={{fontFamily: font.sans, fontSize: 46, fontWeight: 300, letterSpacing: '-0.05em', color: color.blue}}>v4.0</span>
+          <span style={{fontFamily: font.sans, fontSize: 20, fontWeight: 700, color: color.mute}}>다음 수업</span>
         </div>
 
         {VERSIONS.map((_, i) => (

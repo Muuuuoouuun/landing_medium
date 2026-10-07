@@ -1,0 +1,3 @@
+Plus Jakarta Sans (latin 800, via @fontsource/plus-jakarta-sans 5.x) — SIL Open Font License 1.1
+https://github.com/tokotype/PlusJakartaSans
+Stand-in for the end-card wordmark until a licensed Gilroy file is added to this folder.
