@@ -2,11 +2,14 @@
   "name": "classin-solo-20s",
   "private": true,
   "version": "0.1.0",
-  "description": "ClassIn 20s cinematic kinetic-typography commercial for solo academy directors (1인 원장)",
+  "description": "ClassIn 20s cinematic kinetic-typography commercial for solo academy directors (1\uc778 \uc6d0\uc7a5)",
   "scripts": {
     "studio": "remotion studio src/index.ts",
     "render": "remotion render src/index.ts ClassIn20s out/classin-20s.mp4",
     "still": "remotion still src/index.ts ClassIn20s out/still.png",
+    "audio:setup": "python3 -m venv .venv-audio && .venv-audio/bin/pip install -r audio/requirements.txt",
+    "audio:cues": "tsx scripts/export-cues.ts",
+    "audio": "npm run audio:cues && .venv-audio/bin/python audio/build_audio.py",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
@@ -26,6 +29,7 @@
   },
   "devDependencies": {
     "@types/react": "^18.3.31",
+    "tsx": "^4.23.15",
     "typescript": "^5.9.3"
   }
 }

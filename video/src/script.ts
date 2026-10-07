@@ -28,8 +28,10 @@ export type Shot = {
   index?: string;
   /** Clock shown in the shot, HH:MM. */
   clock?: string;
-  /** Local frame of the shot's big impact (slot landing, drop). Flashes and the backdrop sync to it. */
+  /** Local frame of the shot's big impact (slot landing, drop). Flashes, backdrop and sound sync to it. */
   hit?: number;
+  /** Named local frames that picture and sound both sync to (e.g. upgrade steps). */
+  marks?: Record<string, number>;
   lines: Seg[][];
   sub?: string;
   cta?: string;
@@ -92,7 +94,8 @@ export const SHOTS: Shot[] = [
     id: 'S04',
     act: 'TURN',
     ...timing('S04'),
-    hit: 18,
+    // Lands exactly on beat 9 (6.0s), where the music turns bright.
+    hit: 20,
     lines: [[{t: '교육', tone: 'green', from: '회의'}, {t: '용 툴, '}, {t: 'ClassIn', tone: 'brand'}, {t: '.'}]],
     visual: '"회의"에 취소선 → 슬롯머신처럼 회의·화상·채팅을 지나 "교육"에 착지. 초록 링이 퍼지며 화면 전체가 밝고 따뜻한 톤으로 전환. ClassIn 워드마크가 빛을 받으며 와이프 인.',
     sfx: '슬롯 회전 → 베이스 히트 ①',
@@ -162,6 +165,8 @@ export const SHOTS: Shot[] = [
     act: 'AI',
     ...timing('S11'),
     label: '강의 업그레이드',
+    // v2.0 and v3.0 land on beats 24 and 25.
+    marks: {v1: 4, v2: 20, v3: 40},
     lines: [[{t: '내 강의는 계속 '}, {t: '업그레이드', tone: 'ai', fx: 'level'}, {t: '됩니다.'}]],
     visual:
       '계단처럼 오르는 성장 라인 위로 강의 카드가 v1.0 → v2.0 → v3.0 순서로 한 칸씩 올라섬. AI 피드백 칩("질문 타이밍", "예시 추가")이 날아와 꽂힐 때마다 카드가 업그레이드되고 점수 링이 차오름, 아래 막대가 솟고 "+14", "+11"이 튀어 오름. 마지막 v3.0 카드는 글로우와 함께 커지고, 점선이 다음 버전(v4.0)으로 이어짐. "업그레이드" 글자도 단계마다 더 굵어짐.',

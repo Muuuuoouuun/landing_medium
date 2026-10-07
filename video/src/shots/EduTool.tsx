@@ -10,22 +10,23 @@ export const EduTool: React.FC = () => {
   const shot = getShot('S04');
   const frame = useCurrentFrame();
   const {fps} = useVideoConfig();
-  const HIT = shot.hit ?? 18;
+  const HIT = shot.hit ?? 20;
   const [slotSeg, restSeg, brandSeg, tailSeg] = shot.lines[0];
   const size = 150;
 
   // Strike through the old word, then roll: 회의 → 화상 → 채팅 → 교육.
   const strike = ramp(frame, 0, 7);
   const strip = [slotSeg.from ?? '회의', '화상', '채팅', slotSeg.t];
-  const rollSpring = (f: number) => spring({frame: f - 6, fps, config: {damping: 14, stiffness: 105, mass: 0.85}});
+  // The reel takes ~10 frames to land, so it starts rolling 10 frames before the hit.
+  const rollSpring = (f: number) => spring({frame: f - (HIT - 10), fps, config: {damping: 14, stiffness: 105, mass: 0.85}});
   const roll = rollSpring(frame) * (strip.length - 1);
   const rollVel = roll - rollSpring(frame - 1) * (strip.length - 1);
 
   const punch = interpolate(frame, [HIT - 1, HIT, HIT + 12], [1, 1.07, 1], CLAMP);
   const ring = ramp(frame, HIT, HIT + 16);
-  const wipe = ramp(frame, HIT + 2, HIT + 14);
-  const sweep = interpolate(frame, [HIT + 8, HIT + 20], [120, -20], CLAMP);
-  const exit = ramp(frame, 35, 40, EASE_IN);
+  const wipe = ramp(frame, HIT + 1, HIT + 11);
+  const sweep = interpolate(frame, [HIT + 6, HIT + 18], [120, -20], CLAMP);
+  const exit = ramp(frame, 36, 40, EASE_IN);
 
   return (
     <AbsoluteFill style={{justifyContent: 'center', alignItems: 'center'}}>
@@ -95,7 +96,7 @@ export const EduTool: React.FC = () => {
         >
           {brandSeg.t}
         </span>
-        <span style={{lineHeight: `${size * 1.18}px`, color: color.greenBright, opacity: ramp(frame, HIT + 10, HIT + 14, EASE_OUT), maxWidth: `${ramp(frame, HIT + 10, HIT + 14) * 0.4}em`, overflow: 'hidden', display: 'inline-block'}}>{tailSeg.t}</span>
+        <span style={{lineHeight: `${size * 1.18}px`, color: color.greenBright, opacity: ramp(frame, HIT + 8, HIT + 11, EASE_OUT), maxWidth: `${ramp(frame, HIT + 8, HIT + 11) * 0.4}em`, overflow: 'hidden', display: 'inline-block'}}>{tailSeg.t}</span>
       </div>
     </AbsoluteFill>
   );

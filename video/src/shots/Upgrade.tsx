@@ -8,8 +8,9 @@ import {CLAMP, EASE_IN, EASE_IO, EASE_OUT, pop, ramp} from '../lib/anim';
 import {getShot} from '../script';
 import {AI_GRADIENT, cardStyle, color, font} from '../theme';
 
-/** Local frames where v1.0, v2.0 and v3.0 land. */
-const STEPS = [6, 22, 38];
+/** Local frames where v1.0, v2.0 and v3.0 land (shared with the soundtrack via script marks). */
+const MARKS = getShot('S11').marks ?? {v1: 4, v2: 20, v3: 40};
+const STEPS = [MARKS.v1, MARKS.v2, MARKS.v3];
 const NODES = [
   {x: 380, y: 930},
   {x: 930, y: 790},
@@ -33,9 +34,9 @@ const FEEDBACK = [
 
 /** Growth line, drawn one segment per upgrade; `NEXT` is the dashed promise of the next version. */
 const SEGMENTS = [
-  {d: 'M 90 985 C 200 978, 290 955, 380 930', draw: [0, 8]},
-  {d: 'M 380 930 C 560 885, 750 840, 930 790', draw: [12, 22]},
-  {d: 'M 930 790 C 1110 740, 1300 690, 1480 625', draw: [28, 38]},
+  {d: 'M 90 985 C 200 978, 290 955, 380 930', draw: [0, STEPS[0] + 2]},
+  {d: 'M 380 930 C 560 885, 750 840, 930 790', draw: [STEPS[1] - 10, STEPS[1]]},
+  {d: 'M 930 790 C 1110 740, 1300 690, 1480 625', draw: [STEPS[2] - 12, STEPS[2]]},
 ];
 const FULL_PATH = SEGMENTS.map((seg, i) => (i === 0 ? seg.d : seg.d.replace(/^M [\d.]+ [\d.]+ /, ''))).join(' ');
 const SEGMENT_LENGTHS = SEGMENTS.map((seg) => getLength(seg.d));
@@ -298,7 +299,7 @@ export const Upgrade: React.FC = () => {
   const driftX = interpolate(frame, [0, 56], [40, -40], {...CLAMP, easing: EASE_IO});
   const driftY = interpolate(frame, [0, 56], [24, -30], {...CLAMP, easing: EASE_IO});
   const exit = ramp(frame, durationInFrames - 6, durationInFrames, EASE_IN);
-  const next = ramp(frame, 44, 56, EASE_IO);
+  const next = ramp(frame, STEPS[2] + 6, STEPS[2] + 16, EASE_IO);
 
   return (
     <AbsoluteFill style={{opacity: 1 - exit, filter: exit > 0 ? `blur(${exit * 14}px)` : undefined, transform: `scale(${1 + exit * 0.06})`}}>
@@ -399,8 +400,8 @@ export const Upgrade: React.FC = () => {
             borderRadius: 24,
             border: `3px dashed ${color.blue}`,
             background: 'rgba(255,255,255,0.4)',
-            opacity: 0.75 * ramp(frame, 48, 56),
-            transform: `translateY(${(1 - ramp(frame, 48, 56)) * 24}px)`,
+            opacity: 0.75 * ramp(frame, STEPS[2] + 10, STEPS[2] + 17),
+            transform: `translateY(${(1 - ramp(frame, STEPS[2] + 10, STEPS[2] + 17)) * 24}px)`,
             padding: '20px 24px',
           }}
         >

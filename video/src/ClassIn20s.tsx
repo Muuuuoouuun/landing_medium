@@ -1,5 +1,5 @@
 import React from 'react';
-import {AbsoluteFill, Sequence} from 'remotion';
+import {AbsoluteFill, Html5Audio, Sequence, staticFile} from 'remotion';
 import {Backdrop, FilmFinish, Flash} from './components/Atmosphere';
 import {SHOTS, getShot} from './script';
 import {AIEval} from './shots/AIEval';
@@ -36,6 +36,8 @@ export const ClassIn20s: React.FC = () => {
 
   return (
     <AbsoluteFill>
+      {/* Score + cue-synced effects, built by `npm run audio` from src/audio/cues.ts. */}
+      <Html5Audio src={staticFile('audio/soundtrack.wav')} />
       <Backdrop />
       {SHOTS.map((shot) => {
         const Component = SHOT_COMPONENTS[shot.id];
