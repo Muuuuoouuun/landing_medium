@@ -8,8 +8,8 @@ import {KineticLine} from './KineticLine';
 
 /** Horizontal whip: slides in from the right, out to the left. Returns x offset for a frame. */
 const whipX = (f: number, dur: number, distance: number) => {
-  const inX = interpolate(f, [0, 8], [distance, 0], {...CLAMP, easing: EASE_OUT});
-  const outX = interpolate(f, [dur - 6, dur], [0, -distance], {...CLAMP, easing: EASE_IN});
+  const inX = interpolate(f, [0, 10], [distance, 0], {...CLAMP, easing: EASE_OUT});
+  const outX = interpolate(f, [dur - 7, dur], [0, -distance], {...CLAMP, easing: EASE_IN});
   return inX + outX;
 };
 
@@ -63,7 +63,7 @@ export const FeatureFrame: React.FC<{shot: Shot; children: React.ReactNode; uiWi
   const uiX = whipX(frame, durationInFrames, 620);
   const textV = Math.abs(textX - whipX(frame - 1, durationInFrames, 380));
   const uiV = Math.abs(uiX - whipX(frame - 1, durationInFrames, 620));
-  const uiIn = pop(frame, fps, 2, {damping: 16});
+  const uiIn = pop(frame, fps, 3, {damping: 16});
 
   return (
     <AbsoluteFill>
@@ -92,10 +92,10 @@ export const FeatureFrame: React.FC<{shot: Shot; children: React.ReactNode; uiWi
         style={{position: 'absolute', left: 160, top: 0, bottom: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center', transform: `translateX(${textX}px)`}}
       >
         <div style={{marginBottom: 34}}>
-          <FeatureChip shot={shot} appear={ramp(frame, 1, 8)} />
+          <FeatureChip shot={shot} appear={ramp(frame, 1, 10)} />
         </div>
         {shot.lines.map((line, i) => (
-          <KineticLine key={i} segs={line} start={3 + i * 5} size={112} />
+          <KineticLine key={i} segs={line} start={4 + i * 6} size={112} />
         ))}
       </DirBlur>
       <DirBlur

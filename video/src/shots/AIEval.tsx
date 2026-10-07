@@ -26,7 +26,7 @@ const HudTag: React.FC<{text: string; at: number; x: number; y: number}> = ({tex
   const {fps} = useVideoConfig();
   const p = pop(frame, fps, at, {damping: 13, stiffness: 260});
   if (frame < at) return null;
-  const typed = Math.round(interpolate(frame, [at, at + 6], [0, text.length], CLAMP));
+  const typed = Math.round(interpolate(frame, [at, at + 8], [0, text.length], CLAMP));
   return (
     <div
       style={{
@@ -58,9 +58,9 @@ const AISlam: React.FC = () => {
   const frame = useCurrentFrame();
   const {fps} = useVideoConfig();
   const land = spring({frame, fps, config: {damping: 12, stiffness: 300, mass: 0.6}});
-  const split = (1 - ramp(frame, 0, 8)) * 26;
-  const leave = ramp(frame, 9, 15, EASE_IN);
-  const shake = interpolate(frame, [0, 8], [14, 0], CLAMP);
+  const split = (1 - ramp(frame, 0, 10)) * 26;
+  const leave = ramp(frame, 12, 20, EASE_IN);
+  const shake = interpolate(frame, [0, 10], [14, 0], CLAMP);
   const sx = noise2D('ai-x', frame * 0.9, 0) * shake;
   const sy = noise2D('ai-y', 0, frame * 0.9) * shake;
   if (leave >= 1) return null;
@@ -91,7 +91,7 @@ const AISlam: React.FC = () => {
           background: `repeating-conic-gradient(from ${frame * 2}deg, rgba(14,165,198,0.13) 0deg 5deg, transparent 5deg 15deg)`,
           maskImage: 'radial-gradient(circle, black 0%, transparent 60%)',
           WebkitMaskImage: 'radial-gradient(circle, black 0%, transparent 60%)',
-          opacity: 1 - ramp(frame, 4, 14),
+          opacity: 1 - ramp(frame, 5, 18),
         }}
       />
       <div style={{...word, color: '#22D3EE', transform: `translateX(${-split}px)`, opacity: 0.7, mixBlendMode: 'multiply'}}>AI</div>
@@ -106,15 +106,15 @@ export const AIEval: React.FC = () => {
   const shot = getShot('S09');
   const frame = useCurrentFrame();
   const {fps} = useVideoConfig();
-  const panelIn = pop(frame, fps, 11, {damping: 17, stiffness: 160});
-  const scan = interpolate(frame, [15, 38], [0, WAVE_W], {...CLAMP, easing: EASE_IO});
-  const radar = ramp(frame, 18, 34, EASE_IO);
-  const focusBand = ramp(frame, 28, 34);
+  const panelIn = pop(frame, fps, 15, {damping: 17, stiffness: 150});
+  const scan = interpolate(frame, [20, 50], [0, WAVE_W], {...CLAMP, easing: EASE_IO});
+  const radar = ramp(frame, 24, 44, EASE_IO);
+  const focusBand = ramp(frame, 38, 44);
 
   return (
     <AbsoluteFill>
       <AbsoluteFill style={{alignItems: 'center', paddingTop: 92}}>
-        <KineticLine segs={shot.lines[0]} start={10} size={96} />
+        <KineticLine segs={shot.lines[0]} start={14} size={96} />
       </AbsoluteFill>
 
       <div
@@ -155,10 +155,10 @@ export const AIEval: React.FC = () => {
               fontSize: 24,
               fontWeight: 700,
               color: color.green,
-              opacity: ramp(frame, 36, 40),
+              opacity: ramp(frame, 48, 52),
             }}
           >
-            <CheckBadge size={30} p={ramp(frame, 36, 42)} /> 분석 완료
+            <CheckBadge size={30} p={ramp(frame, 48, 55)} /> 분석 완료
           </span>
         </div>
 
@@ -227,9 +227,9 @@ export const AIEval: React.FC = () => {
           </div>
         </div>
 
-        <HudTag text="발화 비율  선생님 6 : 학생 4" at={18} x={60} y={112} />
-        <HudTag text="질문 12회" at={22} x={560} y={150} />
-        <HudTag text="집중 구간 18–24분" at={28} x={(WAVE_W * 18) / 50 + 40} y={528} />
+        <HudTag text="발화 비율  선생님 6 : 학생 4" at={24} x={60} y={112} />
+        <HudTag text="질문 12회" at={30} x={560} y={150} />
+        <HudTag text="집중 구간 18–24분" at={38} x={(WAVE_W * 18) / 50 + 40} y={528} />
 
         {/* Radar chart. */}
         <svg width={460} height={460} viewBox="-230 -230 460 460" style={{position: 'absolute', right: 40, top: 140}}>
@@ -254,7 +254,7 @@ export const AIEval: React.FC = () => {
               <stop offset="100%" stopColor={color.blue} stopOpacity={0.3} />
             </linearGradient>
           </defs>
-          <path d={polygon(RADAR_VALUES.map((v) => v * (0.6 + 0.4 * radar)))} fill="url(#radar-fill)" opacity={ramp(frame, 26, 36)} />
+          <path d={polygon(RADAR_VALUES.map((v) => v * (0.6 + 0.4 * radar)))} fill="url(#radar-fill)" opacity={ramp(frame, 34, 46)} />
           <path
             d={polygon(RADAR_VALUES)}
             fill="none"
@@ -265,7 +265,7 @@ export const AIEval: React.FC = () => {
           />
           {RADAR_VALUES.map((v, i) => {
             const [x, y] = radarPoint(i, v * RADAR_R);
-            return <circle key={i} cx={x} cy={y} r={8} fill={color.white} stroke={color.cyan} strokeWidth={4} opacity={ramp(frame, 20 + i * 3, 24 + i * 3, EASE_OUT)} />;
+            return <circle key={i} cx={x} cy={y} r={8} fill={color.white} stroke={color.cyan} strokeWidth={4} opacity={ramp(frame, 26 + i * 3.5, 31 + i * 3.5, EASE_OUT)} />;
           })}
         </svg>
       </div>

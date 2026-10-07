@@ -20,25 +20,25 @@ export const AIManage: React.FC = () => {
   const shot = getShot('S10');
   const frame = useCurrentFrame();
   const {fps} = useVideoConfig();
-  const sweep = interpolate(frame, [3, 13], [-500, 1500], {...CLAMP, easing: EASE_IO});
-  const bubble = pop(frame, fps, 12, {damping: 15});
-  const typed = Math.round(interpolate(frame, [14, 27], [0, SUMMARY.length], CLAMP));
-  const exit = ramp(frame, 26, 30, EASE_IN);
+  const sweep = interpolate(frame, [4, 17], [-500, 1500], {...CLAMP, easing: EASE_IO});
+  const bubble = pop(frame, fps, 16, {damping: 15});
+  const typed = Math.round(interpolate(frame, [18, 34], [0, SUMMARY.length], CLAMP));
+  const exit = ramp(frame, 35, 40, EASE_IN);
 
   return (
     <AbsoluteFill style={{opacity: 1 - exit * 0.5, transform: `translateY(${-exit * 40}px)`}}>
       <AbsoluteFill style={{alignItems: 'center', paddingTop: 70}}>
         <div style={{marginBottom: 26}}>
-          <FeatureChip shot={shot} appear={ramp(frame, 0, 6)} />
+          <FeatureChip shot={shot} appear={ramp(frame, 0, 8)} />
         </div>
-        <KineticLine segs={shot.lines[0]} start={0} size={112} fxStart={13} fxDuration={14} />
+        <KineticLine segs={shot.lines[0]} start={0} size={112} fxStart={17} fxDuration={18} />
       </AbsoluteFill>
 
       <div style={{position: 'absolute', left: 300, top: 420, width: 600, height: 520}}>
         {TASKS.map((task, i) => {
-          const settle = spring({frame: frame - 5 - i, fps, config: {damping: 15, stiffness: 150}});
-          const enter = pop(frame, fps, i * 1.2, {damping: 18});
-          const check = ramp(frame, 13 + i * 2.5, 18 + i * 2.5);
+          const settle = spring({frame: frame - 6 - i * 1.2, fps, config: {damping: 15, stiffness: 130}});
+          const enter = pop(frame, fps, i * 1.5, {damping: 18});
+          const check = ramp(frame, 17 + i * 3, 23 + i * 3);
           return (
             <div
               key={task.title}
@@ -80,7 +80,7 @@ export const AIManage: React.FC = () => {
           height: 600,
           transform: 'skewX(-18deg)',
           background: 'linear-gradient(90deg, transparent, rgba(34,211,238,0.28), rgba(255,255,255,0.6), rgba(34,211,238,0.28), transparent)',
-          opacity: frame < 14 ? 1 : 0,
+          opacity: frame < 18 ? 1 : 0,
         }}
       />
 

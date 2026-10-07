@@ -2,15 +2,21 @@ import {noise2D} from '@remotion/noise';
 import React from 'react';
 import {AbsoluteFill, interpolate, interpolateColors, useCurrentFrame} from 'remotion';
 import {CLAMP} from '../lib/anim';
+import {getShot} from '../script';
 import {color} from '../theme';
 
 /** Global light-theme backdrop: paper, drifting dot grid and soft color fields that warm up after the turn. */
 export const Backdrop: React.FC = () => {
   const frame = useCurrentFrame();
-  // 0 = tired cool grey (before ClassIn), 1 = bright warm paper (after the S04 hit at frame 132).
-  const warm = interpolate(frame, [118, 138], [0, 1], CLAMP);
+  const turn = getShot('S04');
+  const aiStart = getShot('S09');
+  const aiEnd = getShot('S11');
+  const brandHit = turn.from + (turn.hit ?? 0);
+  const aiOut = aiEnd.from + aiEnd.durationInFrames;
+  // 0 = tired cool grey (before ClassIn), 1 = bright warm paper (after the S04 hit).
+  const warm = interpolate(frame, [brandHit - 14, brandHit + 10], [0, 1], CLAMP);
   // AI act leans the color fields toward cyan/blue.
-  const ai = interpolate(frame, [266, 276, 368, 384], [0, 1, 1, 0], CLAMP);
+  const ai = interpolate(frame, [aiStart.from - 6, aiStart.from + 8, aiOut - 10, aiOut + 12], [0, 1, 1, 0], CLAMP);
 
   const paper = interpolateColors(warm, [0, 1], [color.paperCool, color.paper]);
   const fieldA = interpolateColors(ai, [0, 1], [interpolateColors(warm, [0, 1], ['#CDD5D1', '#C3F2DD']), '#C6EEF7']);

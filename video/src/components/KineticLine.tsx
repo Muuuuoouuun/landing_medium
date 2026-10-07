@@ -24,7 +24,8 @@ export const gradientChar = (i: number, n: number, gradient = AI_GRADIENT): Reac
 
 /**
  * One line of kinetic type: characters rise in with a spring and de-blur, staggered.
- * Segments marked with `fx` act out their meaning once `fxStart` is reached.
+ * Segments marked with `fx` act out their meaning, driven either by `fxStart`/`fxDuration`
+ * or by an explicit `fxValue` (0–1) when the shot needs to sync the effect to its own beats.
  */
 export const KineticLine: React.FC<{
   segs: Seg[];
@@ -34,11 +35,12 @@ export const KineticLine: React.FC<{
   stagger?: number;
   fxStart?: number;
   fxDuration?: number;
+  fxValue?: number;
   style?: React.CSSProperties;
-}> = ({segs, start = 0, size, weight = 800, stagger = 1, fxStart = Infinity, fxDuration = 14, style}) => {
+}> = ({segs, start = 0, size, weight = 800, stagger = 1.25, fxStart = Infinity, fxDuration = 14, fxValue, style}) => {
   const frame = useCurrentFrame();
   const {fps} = useVideoConfig();
-  const fxP = Number.isFinite(fxStart) ? ramp(frame, fxStart, fxStart + fxDuration, EASE_IO) : 0;
+  const fxP = fxValue ?? (Number.isFinite(fxStart) ? ramp(frame, fxStart, fxStart + fxDuration, EASE_IO) : 0);
   let charIndex = 0;
 
   return (
@@ -67,18 +69,18 @@ export const KineticLine: React.FC<{
           <span key={s} style={segStyle}>
             {chars.map((ch, c) => {
               const i = charIndex++;
-              const t = spring({frame: frame - start - i * stagger, fps, config: {damping: 19, stiffness: 210, mass: 0.6}});
+              const t = spring({frame: frame - start - i * stagger, fps, config: {damping: 19, stiffness: 180, mass: 0.65}});
               const reveal = interpolate(t, [0, 1], [0, 1], CLAMP);
               let fxTransform = '';
               let fxWeight: number | undefined;
-              if (seg.fx === 'drop') {
-                const q = interpolate(fxP * 1.6 - c * 0.12, [0, 1], [0, 1], CLAMP);
-                fxTransform = ` translateY(${q * (0.16 + c * 0.05) * size}px) rotate(${(c % 2 ? 1 : -1) * q * 7}deg)`;
-              }
               if (seg.fx === 'float') {
                 const q = interpolate(fxP * 1.5 - c * 0.08, [0, 1], [0, 1], CLAMP);
                 fxTransform = ` translateY(${-q * (0.1 + c * 0.035) * size}px)`;
                 fxWeight = interpolate(q, [0, 1], [weight, 260]);
+              }
+              if (seg.fx === 'level') {
+                // Starts light and gets heavier with every upgrade step.
+                fxWeight = interpolate(fxP, [0, 0.5, 1], [430, 680, 920]);
               }
               return (
                 <span

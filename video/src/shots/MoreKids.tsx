@@ -43,12 +43,12 @@ const Kid: React.FC<{x: number; y: number; palette: string[]; appear: number; he
   </div>
 );
 
-/** S08 — "더 많은 아이들을 만났다." One student tile pulls back into hundreds. */
+/** S08 — "더 많은 아이들을 만나세요." One student tile pulls back into hundreds. */
 export const MoreKids: React.FC = () => {
   const shot = getShot('S08');
   const frame = useCurrentFrame();
 
-  const logScale = interpolate(frame, [0, 27], [Math.log(START_SCALE), 0], {...CLAMP, easing: EASE_IO});
+  const logScale = interpolate(frame, [0, 34], [Math.log(START_SCALE), 0], {...CLAMP, easing: EASE_IO});
   const scale = Math.exp(logScale);
   // How many rings around the hero tile are on screen at this zoom.
   const reach = 1350 / (PITCH * scale) + 0.6;
@@ -63,7 +63,7 @@ export const MoreKids: React.FC = () => {
     [],
   );
 
-  const textIn = interpolate(frame, [0, 8], [380, 0], {...CLAMP, easing: EASE_OUT});
+  const textIn = interpolate(frame, [0, 10], [380, 0], {...CLAMP, easing: EASE_OUT});
 
   return (
     <AbsoluteFill>
@@ -93,10 +93,10 @@ export const MoreKids: React.FC = () => {
         }}
       >
         <div style={{marginBottom: 30}}>
-          <FeatureChip shot={shot} appear={ramp(frame, 1, 8)} />
+          <FeatureChip shot={shot} appear={ramp(frame, 1, 10)} />
         </div>
         {shot.lines.map((line, i) => (
-          <KineticLine key={i} segs={line} start={3 + i * 5} size={112} />
+          <KineticLine key={i} segs={line} start={4 + i * 6} size={112} />
         ))}
       </div>
     </AbsoluteFill>

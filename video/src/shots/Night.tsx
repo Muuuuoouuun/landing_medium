@@ -56,27 +56,27 @@ const ChoreChip: React.FC<{chip: (typeof CHORES)[number]; at: number; i: number}
   );
 };
 
-/** S01 — 23:40. "수업은 끝났는데, 하루는 끝나지 않았다." Chores pile up while the clock slips. */
+/** S01 — 23:40. "수업은 끝났는데, 하루가 끝나지 않으시죠?" Chores pile up while the clock slips. */
 export const Night: React.FC = () => {
   const shot = getShot('S01');
   const frame = useCurrentFrame();
   const [hh, mm] = (shot.clock ?? '23:40').split(':').map(Number);
 
   // Clock rolls in, then time starts slipping once the chores arrive.
-  const slip = interpolate(frame, [22, 45], [0, 18], {...CLAMP, easing: Easing.in(Easing.quad)});
-  const slipPrev = interpolate(frame - 1, [22, 45], [0, 18], {...CLAMP, easing: Easing.in(Easing.quad)});
-  const spin = 1 - ramp(frame, 0, 16, EASE_OUT);
-  const spinPrev = 1 - ramp(frame - 1, 0, 16, EASE_OUT);
+  const slip = interpolate(frame, [30, 60], [0, 18], {...CLAMP, easing: Easing.in(Easing.quad)});
+  const slipPrev = interpolate(frame - 1, [30, 60], [0, 18], {...CLAMP, easing: Easing.in(Easing.quad)});
+  const spin = 1 - ramp(frame, 0, 20, EASE_OUT);
+  const spinPrev = 1 - ramp(frame - 1, 0, 20, EASE_OUT);
 
-  const push = interpolate(frame, [0, 45], [1, 1.08]);
-  const shake = interpolate(frame, [26, 44], [0, 8], CLAMP);
+  const push = interpolate(frame, [0, 60], [1, 1.08]);
+  const shake = interpolate(frame, [34, 58], [0, 8], CLAMP);
   const sx = noise2D('n1x', frame * 0.4, 0) * shake;
   const sy = noise2D('n1y', 0, frame * 0.4) * shake;
 
   return (
     <AbsoluteFill style={{transform: `translate(${sx}px, ${sy}px) scale(${push})`}}>
       {CHORES.map((chip, i) => (
-        <ChoreChip key={chip.text} chip={chip} at={21 + i * 2.2} i={i} />
+        <ChoreChip key={chip.text} chip={chip} at={26 + i * 2.6} i={i} />
       ))}
       <AbsoluteFill style={{justifyContent: 'center', alignItems: 'center', gap: 6}}>
         <div style={{display: 'flex', alignItems: 'center', gap: 22, marginBottom: 18}}>
@@ -88,12 +88,12 @@ export const Night: React.FC = () => {
             spin={spin}
             spinVelocity={spin - spinPrev}
             size={128}
-            colonOn={Math.floor(frame / 8) % 2 === 0}
+            colonOn={Math.floor(frame / 10) % 2 === 0}
             tint={color.ink}
           />
         </div>
-        <KineticLine segs={shot.lines[0]} start={5} size={116} />
-        <KineticLine segs={shot.lines[1]} start={20} size={116} />
+        <KineticLine segs={shot.lines[0]} start={6} size={116} />
+        <KineticLine segs={shot.lines[1]} start={24} size={116} />
       </AbsoluteFill>
     </AbsoluteFill>
   );

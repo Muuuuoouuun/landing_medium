@@ -51,17 +51,17 @@ const Tile: React.FC<{i: number; fall: number}> = ({i, fall}) => (
   </div>
 );
 
-/** S03 — "회의용 툴을 내려놓았다." The meeting grid topples like dominoes, then the window drops. */
+/** S03 — "아직 회의용 툴로 수업하시나요?" The meeting grid topples like dominoes, then the window drops. */
 export const MeetingTool: React.FC = () => {
   const shot = getShot('S03');
   const frame = useCurrentFrame();
-  const enter = ramp(frame, 0, 8);
-  const drop = ramp(frame, 20, 30, EASE_IN);
+  const enter = ramp(frame, 0, 10);
+  const drop = ramp(frame, 28, 40, EASE_IN);
 
   return (
     <AbsoluteFill>
       <AbsoluteFill style={{alignItems: 'center', paddingTop: 110}}>
-        <KineticLine segs={shot.lines[0]} start={0} size={104} fxStart={15} fxDuration={13} />
+        <KineticLine segs={shot.lines[0]} start={0} size={104} />
       </AbsoluteFill>
       <AbsoluteFill style={{alignItems: 'center', justifyContent: 'flex-end', paddingBottom: 40, perspective: 1800}}>
         <div
@@ -97,7 +97,7 @@ export const MeetingTool: React.FC = () => {
             }}
           >
             {Array.from({length: 9}).map((_, i) => (
-              <Tile key={i} i={i} fall={ramp(frame, 7 + i * 1.5, 15 + i * 1.5, EASE_IN)} />
+              <Tile key={i} i={i} fall={ramp(frame, 12 + i * 1.8, 22 + i * 1.8, EASE_IN)} />
             ))}
           </div>
           <div style={{height: 70, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 18, borderTop: `1px solid ${color.line}`}}>
@@ -114,7 +114,7 @@ export const MeetingTool: React.FC = () => {
                 fontFamily: font.sans,
                 fontSize: 20,
                 fontWeight: 700,
-                opacity: ramp(frame, 3, 9, EASE_OUT),
+                opacity: ramp(frame, 4, 11, EASE_OUT),
               }}
             >
               회의 나가기

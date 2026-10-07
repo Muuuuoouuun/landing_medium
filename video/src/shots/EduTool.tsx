@@ -5,28 +5,27 @@ import {CLAMP, EASE_IN, EASE_OUT, ramp} from '../lib/anim';
 import {getShot} from '../script';
 import {color, font} from '../theme';
 
-const HIT = 13;
-
 /** S04 — "회의용 툴" rolls into "교육용 툴, ClassIn." First big hit; the whole film warms up here. */
 export const EduTool: React.FC = () => {
   const shot = getShot('S04');
   const frame = useCurrentFrame();
   const {fps} = useVideoConfig();
+  const HIT = shot.hit ?? 18;
   const [slotSeg, restSeg, brandSeg, tailSeg] = shot.lines[0];
   const size = 150;
 
   // Strike through the old word, then roll: 회의 → 화상 → 채팅 → 교육.
-  const strike = ramp(frame, 0, 5);
+  const strike = ramp(frame, 0, 7);
   const strip = [slotSeg.from ?? '회의', '화상', '채팅', slotSeg.t];
-  const rollSpring = (f: number) => spring({frame: f - 5, fps, config: {damping: 13, stiffness: 120, mass: 0.8}});
+  const rollSpring = (f: number) => spring({frame: f - 6, fps, config: {damping: 14, stiffness: 105, mass: 0.85}});
   const roll = rollSpring(frame) * (strip.length - 1);
   const rollVel = roll - rollSpring(frame - 1) * (strip.length - 1);
 
-  const punch = interpolate(frame, [HIT - 1, HIT, HIT + 10], [1, 1.07, 1], CLAMP);
-  const ring = ramp(frame, HIT, HIT + 14);
-  const wipe = ramp(frame, 15, 25);
-  const sweep = interpolate(frame, [20, 30], [120, -20], CLAMP);
-  const exit = ramp(frame, 26, 30, EASE_IN);
+  const punch = interpolate(frame, [HIT - 1, HIT, HIT + 12], [1, 1.07, 1], CLAMP);
+  const ring = ramp(frame, HIT, HIT + 16);
+  const wipe = ramp(frame, HIT + 2, HIT + 14);
+  const sweep = interpolate(frame, [HIT + 8, HIT + 20], [120, -20], CLAMP);
+  const exit = ramp(frame, 35, 40, EASE_IN);
 
   return (
     <AbsoluteFill style={{justifyContent: 'center', alignItems: 'center'}}>
@@ -96,7 +95,7 @@ export const EduTool: React.FC = () => {
         >
           {brandSeg.t}
         </span>
-        <span style={{lineHeight: `${size * 1.18}px`, color: color.greenBright, opacity: ramp(frame, 22, 26, EASE_OUT), maxWidth: `${ramp(frame, 22, 26) * 0.4}em`, overflow: 'hidden', display: 'inline-block'}}>{tailSeg.t}</span>
+        <span style={{lineHeight: `${size * 1.18}px`, color: color.greenBright, opacity: ramp(frame, HIT + 10, HIT + 14, EASE_OUT), maxWidth: `${ramp(frame, HIT + 10, HIT + 14) * 0.4}em`, overflow: 'hidden', display: 'inline-block'}}>{tailSeg.t}</span>
       </div>
     </AbsoluteFill>
   );

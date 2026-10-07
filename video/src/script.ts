@@ -1,14 +1,14 @@
 import {BEAT} from './theme';
 
 /**
- * Single source of truth for the 15s spot. SCRIPT.md is the human-readable version of this table;
+ * Single source of truth for the 20s spot. SCRIPT.md is the human-readable version of this table;
  * every shot component reads its copy and timing from here, so copy edits happen in this file only.
  */
 export type Act = 'BEFORE' | 'TURN' | 'AFTER' | 'AI' | 'ENDING';
 
 export type Tone = 'ink' | 'red' | 'green' | 'ai' | 'brand';
 /** Kinetic effect played on a segment after it is revealed; each one acts out the word's meaning. */
-export type Fx = 'stretch' | 'drop' | 'float';
+export type Fx = 'stretch' | 'float' | 'level';
 
 export type Seg = {
   t: string;
@@ -28,6 +28,8 @@ export type Shot = {
   index?: string;
   /** Clock shown in the shot, HH:MM. */
   clock?: string;
+  /** Local frame of the shot's big impact (slot landing, drop). Flashes and the backdrop sync to it. */
+  hit?: number;
   lines: Seg[][];
   sub?: string;
   cta?: string;
@@ -35,16 +37,36 @@ export type Shot = {
   sfx: string;
 };
 
-const b = (beats: number) => beats * BEAT;
+/** Shot lengths in beats (90 BPM, 20 frames per beat). They add up to 30 beats = 20s. */
+const PLAN: [string, number][] = [
+  ['S01', 3],
+  ['S02', 3],
+  ['S03', 2],
+  ['S04', 2],
+  ['S05', 2],
+  ['S06', 2],
+  ['S07', 2],
+  ['S08', 2],
+  ['S09', 3],
+  ['S10', 2],
+  ['S11', 3],
+  ['S12', 2],
+  ['S13', 2],
+];
+
+const timing = (id: string) => {
+  const index = PLAN.findIndex(([shotId]) => shotId === id);
+  const beatsBefore = PLAN.slice(0, index).reduce((sum, [, beats]) => sum + beats, 0);
+  return {from: beatsBefore * BEAT, durationInFrames: PLAN[index][1] * BEAT};
+};
 
 export const SHOTS: Shot[] = [
   {
     id: 'S01',
     act: 'BEFORE',
-    from: b(0),
-    durationInFrames: b(3),
+    ...timing('S01'),
     clock: '23:40',
-    lines: [[{t: '수업은 끝났는데,'}], [{t: '하루는 '}, {t: '끝나지 않았다.', tone: 'red'}]],
+    lines: [[{t: '수업은 끝났는데,'}], [{t: '하루가 '}, {t: '끝나지 않으시죠?', tone: 'red'}]],
     visual:
       '시계 23:40이 롤링 인. 두 번째 줄이 뜨는 순간 잡무 알림 카드(보강 일정, 녹화 업로드, 숙제 확인, 학부모 문자…)가 사방에서 쌓이고 시계 분 단위가 빨라짐. 카메라 푸시 인 + 셰이크 증가.',
     sfx: '초침 틱 → 알림음이 겹겹이 쌓임',
@@ -52,27 +74,25 @@ export const SHOTS: Shot[] = [
   {
     id: 'S02',
     act: 'BEFORE',
-    from: b(3),
-    durationInFrames: b(3),
-    lines: [[{t: '가르친 시간보다,'}], [{t: '챙긴 시간이 '}, {t: '더 길었다.', tone: 'red', fx: 'stretch'}]],
+    ...timing('S02'),
+    lines: [[{t: '가르치는 시간보다,'}], [{t: '챙기는 시간이 '}, {t: '더 길죠?', tone: 'red', fx: 'stretch'}]],
     visual:
-      '"가르친 시간" 초록 막대는 짧게 멈추고, "챙긴 시간" 빨간 막대는 화면 밖까지 뻗어 나감. 카메라가 막대를 따라 패닝. "더 길었다"는 글자가 옆으로 늘어남.',
+      '"가르치는 시간" 초록 막대는 짧게 멈추고, "챙기는 시간" 빨간 막대는 화면 밖까지 뻗어 나감. 카메라가 막대를 따라 패닝. "더 길죠?"는 글자가 옆으로 늘어남.',
     sfx: '막대가 늘어나는 상승음',
   },
   {
     id: 'S03',
     act: 'TURN',
-    from: b(6),
-    durationInFrames: b(2),
-    lines: [[{t: '회의용', tone: 'red'}, {t: ' 툴을 '}, {t: '내려놓았다.', fx: 'drop'}]],
-    visual: '화상회의 창(3×3 타일, 음소거 아이콘, 나가기 버튼)이 도미노처럼 쓰러지고 창 전체가 아래로 떨어짐. "내려놓았다" 글자도 아래로 가라앉음.',
+    ...timing('S03'),
+    lines: [[{t: '아직 '}, {t: '회의용', tone: 'red'}, {t: ' 툴로 수업하시나요?'}]],
+    visual: '화상회의 창(3×3 타일, 음소거 아이콘, 나가기 버튼)이 질문과 함께 떠오른 뒤, 타일이 도미노처럼 쓰러지고 창 전체가 아래로 떨어짐.',
     sfx: '휘시 + 타일이 넘어가는 클릭음',
   },
   {
     id: 'S04',
     act: 'TURN',
-    from: b(8),
-    durationInFrames: b(2),
+    ...timing('S04'),
+    hit: 18,
     lines: [[{t: '교육', tone: 'green', from: '회의'}, {t: '용 툴, '}, {t: 'ClassIn', tone: 'brand'}, {t: '.'}]],
     visual: '"회의"에 취소선 → 슬롯머신처럼 회의·화상·채팅을 지나 "교육"에 착지. 초록 링이 퍼지며 화면 전체가 밝고 따뜻한 톤으로 전환. ClassIn 워드마크가 빛을 받으며 와이프 인.',
     sfx: '슬롯 회전 → 베이스 히트 ①',
@@ -80,8 +100,7 @@ export const SHOTS: Shot[] = [
   {
     id: 'S05',
     act: 'AFTER',
-    from: b(10),
-    durationInFrames: b(2),
+    ...timing('S05'),
     label: '자동 녹화',
     index: '01',
     lines: [[{t: '녹화는'}], [{t: '저절로', tone: 'green'}, {t: ' 남고,'}]],
@@ -91,8 +110,7 @@ export const SHOTS: Shot[] = [
   {
     id: 'S06',
     act: 'AFTER',
-    from: b(12),
-    durationInFrames: b(2),
+    ...timing('S06'),
     label: '보강 관리',
     index: '02',
     lines: [[{t: '보강은'}], [{t: '알아서', tone: 'green'}, {t: ' 챙겨지고,'}]],
@@ -102,30 +120,28 @@ export const SHOTS: Shot[] = [
   {
     id: 'S07',
     act: 'AFTER',
-    from: b(14),
-    durationInFrames: b(2),
+    ...timing('S07'),
     label: '상세한 관리',
     index: '03',
-    lines: [[{t: '아이마다'}], [{t: '기록', tone: 'green'}, {t: '이 쌓이고,'}]],
+    lines: [[{t: '아이마다'}], [{t: '기록', tone: 'green'}, {t: '이 쌓이니까,'}]],
     visual: '학생별 출석·과제·참여·이해도 표가 줄줄이 쏟아지고 막대와 숫자가 채워짐.',
     sfx: '데이터 틱 연타',
   },
   {
     id: 'S08',
     act: 'AFTER',
-    from: b(16),
-    durationInFrames: b(2),
+    ...timing('S08'),
     label: '더 많은 아이들',
     index: '04',
-    lines: [[{t: '더 많은 아이들', tone: 'green'}, {t: '을'}], [{t: '만났다.'}]],
+    lines: [[{t: '더 많은 아이들', tone: 'green'}, {t: '을'}], [{t: '만나세요.'}]],
     visual: '학생 한 명의 타일에서 카메라가 끝없이 뒤로 빠지며 수백 명의 그리드가 됨. 마지막에 화이트로 번쩍.',
     sfx: '라이저 정점 → 순간 무음',
   },
   {
     id: 'S09',
     act: 'AI',
-    from: b(18),
-    durationInFrames: b(3),
+    ...timing('S09'),
+    hit: 0,
     label: 'AI 강의평가',
     lines: [[{t: 'AI', tone: 'ai'}, {t: '가 내 수업을 평가하고,'}]],
     visual:
@@ -135,8 +151,7 @@ export const SHOTS: Shot[] = [
   {
     id: 'S10',
     act: 'AI',
-    from: b(21),
-    durationInFrames: b(2),
+    ...timing('S10'),
     label: 'AI 관리',
     lines: [[{t: '관리는 '}, {t: '가벼워지고,', tone: 'ai', fx: 'float'}]],
     visual: '흩어진 할 일 카드가 AI 스윕 한 번에 정렬되고 차례로 체크. AI 요약 말풍선이 타이핑됨. "가벼워지고"는 글자가 얇아지며 떠오름.',
@@ -145,28 +160,26 @@ export const SHOTS: Shot[] = [
   {
     id: 'S11',
     act: 'AI',
-    from: b(23),
-    durationInFrames: b(2),
+    ...timing('S11'),
     label: '강의 업그레이드',
-    lines: [[{t: '내 강의는'}], [{t: '계속 '}, {t: '업그레이드', tone: 'ai'}, {t: '된다.'}]],
-    visual: '버전 v1.0 → v2.0 → v3.0이 롤링하며 매번 더 굵어지고, 뒤로 성장 곡선이 치솟음.',
-    sfx: '업 스텝 3연타',
+    lines: [[{t: '내 강의는 계속 '}, {t: '업그레이드', tone: 'ai', fx: 'level'}, {t: '됩니다.'}]],
+    visual:
+      '계단처럼 오르는 성장 라인 위로 강의 카드가 v1.0 → v2.0 → v3.0 순서로 한 칸씩 올라섬. AI 피드백 칩("질문 타이밍", "예시 추가")이 날아와 꽂힐 때마다 카드가 업그레이드되고 점수 링이 차오름, 아래 막대가 솟고 "+14", "+11"이 튀어 오름. 마지막 v3.0 카드는 글로우와 함께 커지고, 점선이 다음 버전(v4.0)으로 이어짐. "업그레이드" 글자도 단계마다 더 굵어짐.',
+    sfx: '피드백 칩 휙 → 업 스텝 2연타(음정 상승) → 반짝임',
   },
   {
     id: 'S12',
     act: 'ENDING',
-    from: b(25),
-    durationInFrames: b(2),
+    ...timing('S12'),
     clock: '22:00',
-    lines: [[{t: '수업이 끝나면,'}], [{t: '하루도 끝난다.', tone: 'green'}]],
-    visual: '오프닝의 시계가 23:58에서 22:00으로 되감김. 오프닝 문장("수업은 끝났는데, 하루는 끝나지 않았다")에 대한 대구.',
+    lines: [[{t: '수업이 끝나면,'}], [{t: '하루도 끝납니다.', tone: 'green'}]],
+    visual: '오프닝의 시계가 23:58에서 22:00으로 되감김. 오프닝 질문("하루가 끝나지 않으시죠?")에 대한 대답.',
     sfx: '리와인드 → 정적',
   },
   {
     id: 'S13',
     act: 'ENDING',
-    from: b(27),
-    durationInFrames: b(3),
+    ...timing('S13'),
     lines: [[{t: 'ClassIn', tone: 'brand'}]],
     sub: '1인 원장을 위한 교육용 수업 플랫폼',
     cta: '지금 무료 체험하기',

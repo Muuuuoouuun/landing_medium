@@ -29,7 +29,7 @@ const SHOT_COMPONENTS: Record<string, React.FC> = {
   S12: Finale,
 };
 
-export const ClassIn15s: React.FC = () => {
+export const ClassIn20s: React.FC = () => {
   const s04 = getShot('S04');
   const s09 = getShot('S09');
   const s13 = getShot('S13');
@@ -47,8 +47,8 @@ export const ClassIn15s: React.FC = () => {
           </Sequence>
         );
       })}
-      <Flash at={s04.from + 13} peak={0.55} />
-      <Flash at={s09.from} peak={0.92} hold={1} />
+      <Flash at={s04.from + (s04.hit ?? 0)} peak={0.55} />
+      <Flash at={s09.from + (s09.hit ?? 0)} peak={0.92} hold={2} />
       <FilmFinish />
     </AbsoluteFill>
   );

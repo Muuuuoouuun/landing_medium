@@ -42,13 +42,13 @@ export const Finale: React.FC = () => {
 
   // Rewind from where the opening clock stopped (23:58) back to 22:00.
   const target = toMinutes(callback.clock ?? '22:00');
-  const rewind = (f: number) => interpolate(f, [0, 13], [toMinutes('23:58'), target], {...CLAMP, easing: EASE_OUT});
+  const rewind = (f: number) => interpolate(f, [0, 16], [toMinutes('23:58'), target], {...CLAMP, easing: EASE_OUT});
 
-  const lift = ramp(frame, END - 2, END + 12, EASE_IO);
-  const logo = ramp(frame, END + 3, END + 14);
-  const sweep = interpolate(frame, [END + 10, END + 30], [120, -20], CLAMP);
-  const sub = ramp(frame, END + 12, END + 22);
-  const cta = pop(frame, fps, END + 18, {damping: 12, stiffness: 200});
+  const lift = ramp(frame, END - 6, END + 8, EASE_IO);
+  const logo = ramp(frame, END, END + 11);
+  const sweep = interpolate(frame, [END + 8, END + 28], [120, -20], CLAMP);
+  const sub = ramp(frame, END + 8, END + 18);
+  const cta = pop(frame, fps, END + 12, {damping: 12, stiffness: 200});
 
   return (
     <AbsoluteFill>
@@ -63,8 +63,8 @@ export const Finale: React.FC = () => {
           <span style={{fontFamily: font.mono, fontSize: 30, fontWeight: 700, color: color.mute, letterSpacing: '0.1em'}}>PM</span>
           <Clock id="clock-end" minutes={rewind(frame)} velocity={rewind(frame) - rewind(frame - 1)} size={128} tint={color.ink} />
         </div>
-        <KineticLine segs={callback.lines[0]} start={7} size={116} />
-        <KineticLine segs={callback.lines[1]} start={14} size={116} />
+        <KineticLine segs={callback.lines[0]} start={8} size={116} />
+        <KineticLine segs={callback.lines[1]} start={17} size={116} />
       </AbsoluteFill>
 
       <AbsoluteFill style={{justifyContent: 'center', alignItems: 'center', paddingTop: 230}}>
@@ -123,7 +123,7 @@ export const Finale: React.FC = () => {
           <span style={{color: color.greenBright, fontSize: 40}}>→</span>
         </div>
       </AbsoluteFill>
-      <LightLeak start={END + 2} />
+      <LightLeak start={END} />
     </AbsoluteFill>
   );
 };

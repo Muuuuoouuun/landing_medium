@@ -1,10 +1,10 @@
 import type {CSSProperties} from 'react';
 
 export const FPS = 30;
-export const BPM = 120;
-/** One beat at 120 BPM = 0.5s = 15 frames. Every cut in the script lands on this grid. */
+export const BPM = 90;
+/** One beat at 90 BPM = 0.667s = 20 frames. Every cut in the script lands on this grid (30 beats = 20s). */
 export const BEAT = (FPS * 60) / BPM;
-export const DURATION = 450; // 15s
+export const DURATION = 600; // 20s
 
 export const WIDTH = 1920;
 export const HEIGHT = 1080;

@@ -16,12 +16,12 @@ const AXES = 'M 70 330 L 670 330 M 370 40 L 370 380';
 const RecordingUI: React.FC = () => {
   const frame = useCurrentFrame();
   const {fps} = useVideoConfig();
-  const seconds = Math.min(3600, 3598 + Math.floor(frame / 6));
-  const ended = frame >= 13;
+  const seconds = Math.min(3600, 3598 + Math.floor(frame / 8));
+  const ended = frame >= 17;
   const ts = `${String(Math.floor(seconds / 3600)).padStart(2, '0')}:${String(Math.floor((seconds % 3600) / 60)).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}`;
-  const draw = ramp(frame, 0, 13, EASE_IO);
-  const shutter = interpolate(frame, [13, 14, 18], [0, 0.9, 0], CLAMP);
-  const toast = pop(frame, fps, 15, {damping: 15});
+  const draw = ramp(frame, 0, 17, EASE_IO);
+  const shutter = interpolate(frame, [17, 18, 23], [0, 0.9, 0], CLAMP);
+  const toast = pop(frame, fps, 19, {damping: 15});
 
   return (
     <div style={{position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column'}}>
@@ -49,11 +49,11 @@ const RecordingUI: React.FC = () => {
         }}
       >
         <svg width={740} height={420} viewBox="0 0 740 420" style={{position: 'absolute', left: 10, top: 10}}>
-          <path d={AXES} stroke={color.mute} strokeWidth={3} fill="none" {...evolvePath(ramp(frame, 0, 6), AXES)} />
+          <path d={AXES} stroke={color.mute} strokeWidth={3} fill="none" {...evolvePath(ramp(frame, 0, 8), AXES)} />
           <path d={PARABOLA} stroke={color.green} strokeWidth={6} fill="none" strokeLinecap="round" {...evolvePath(draw, PARABOLA)} />
-          <circle cx={370} cy={335} r={9} fill={color.red} opacity={ramp(frame, 9, 12)} />
+          <circle cx={370} cy={335} r={9} fill={color.red} opacity={ramp(frame, 12, 16)} />
         </svg>
-        <div style={{position: 'absolute', left: 40, top: 26, fontFamily: font.mono, fontSize: 30, fontWeight: 700, color: color.inkSoft, opacity: ramp(frame, 2, 8)}}>
+        <div style={{position: 'absolute', left: 40, top: 26, fontFamily: font.mono, fontSize: 30, fontWeight: 700, color: color.inkSoft, opacity: ramp(frame, 2, 10)}}>
           y = x² − 4x + 3
         </div>
         <div style={{position: 'absolute', inset: 0, background: 'white', opacity: shutter}} />
@@ -74,7 +74,7 @@ const RecordingUI: React.FC = () => {
           opacity: Math.min(1, toast * 1.5),
         }}
       >
-        <CheckBadge size={44} p={ramp(frame, 17, 23)} />
+        <CheckBadge size={44} p={ramp(frame, 21, 28)} />
         <span style={{fontFamily: font.sans, fontSize: 30, fontWeight: 800, color: 'white'}}>녹화 완료</span>
         <span style={{fontFamily: font.sans, fontSize: 26, fontWeight: 500, color: '#A9B8B0'}}>바로 다시보기 가능</span>
       </div>
@@ -95,10 +95,10 @@ const ROSTER = ['서연', '민준', '지호'];
 
 const FlyingReplay: React.FC = () => {
   const frame = useCurrentFrame();
-  const p = ramp(frame, 3, 16, EASE_IO);
+  const p = ramp(frame, 4, 20, EASE_IO);
   const len = getLength(FLIGHT);
   const pt = getPointAtLength(FLIGHT, len * p);
-  if (!pt || frame > 17) return null;
+  if (!pt || frame > 21) return null;
   return (
     <div
       style={{
@@ -130,15 +130,15 @@ const FlyingReplay: React.FC = () => {
 const MakeupUI: React.FC = () => {
   const frame = useCurrentFrame();
   const {fps} = useVideoConfig();
-  const flip = ramp(frame, 16, 23, EASE_OUT);
-  const burst = ramp(frame, 16, 26);
+  const flip = ramp(frame, 20, 28, EASE_OUT);
+  const burst = ramp(frame, 20, 32);
 
   return (
     <div style={{position: 'absolute', inset: 0}}>
       <div style={{padding: '30px 34px 0', fontFamily: font.sans, fontSize: 26, fontWeight: 700, color: color.mute}}>오늘 출석 · 함수 1강</div>
       {ROSTER.map((name, i) => {
         const absent = name === '민준';
-        const rowIn = pop(frame, fps, 1 + i * 2, {damping: 18});
+        const rowIn = pop(frame, fps, 1 + i * 2.5, {damping: 18});
         return (
           <div
             key={name}
@@ -188,7 +188,7 @@ const MakeupUI: React.FC = () => {
       <svg width={760} height={560} style={{position: 'absolute', inset: 0}}>
         <defs>
           <mask id="flight-mask">
-            <path d={FLIGHT} stroke="white" strokeWidth={14} fill="none" {...evolvePath(ramp(frame, 2, 15, EASE_IO), FLIGHT)} />
+            <path d={FLIGHT} stroke="white" strokeWidth={14} fill="none" {...evolvePath(ramp(frame, 2, 19, EASE_IO), FLIGHT)} />
           </mask>
         </defs>
         <path
@@ -199,9 +199,9 @@ const MakeupUI: React.FC = () => {
           strokeLinecap="round"
           fill="none"
           mask="url(#flight-mask)"
-          opacity={interpolate(frame, [2, 6, 18, 24], [0, 1, 1, 0], CLAMP)}
+          opacity={interpolate(frame, [2, 6, 22, 30], [0, 1, 1, 0], CLAMP)}
         />
-        <circle cx={630} cy={268} r={40 + burst * 70} fill="none" stroke={color.greenBright} strokeWidth={4} opacity={frame >= 16 ? 1 - burst : 0} />
+        <circle cx={630} cy={268} r={40 + burst * 70} fill="none" stroke={color.greenBright} strokeWidth={4} opacity={frame >= 20 ? 1 - burst : 0} />
       </svg>
       <Trail layers={5} lagInFrames={0.7} trailOpacity={0.45}>
         <FlyingReplay />
@@ -246,8 +246,8 @@ const RecordsUI: React.FC = () => {
         <span style={{textAlign: 'right'}}>이해도</span>
       </div>
       {RECORDS.map((r, i) => {
-        const rowIn = pop(frame, fps, 1 + i * 1.6, {damping: 17});
-        const fill = ramp(frame, 5 + i * 1.6, 18 + i * 1.6, EASE_IO);
+        const rowIn = pop(frame, fps, 1 + i * 2, {damping: 17});
+        const fill = ramp(frame, 6 + i * 2, 22 + i * 2, EASE_IO);
         return (
           <div
             key={r.name}
@@ -269,7 +269,7 @@ const RecordsUI: React.FC = () => {
               <Avatar name={r.name} i={i} size={44} />
               <span style={{fontFamily: font.sans, fontSize: 26, fontWeight: 700, color: color.ink}}>{r.name}</span>
             </span>
-            <CheckBadge size={30} p={ramp(frame, 4 + i * 1.6, 10 + i * 1.6)} />
+            <CheckBadge size={30} p={ramp(frame, 5 + i * 2, 12 + i * 2)} />
             <MiniBar value={r.hw * fill} tint={color.greenBright} />
             <MiniBar value={r.part * fill} tint={color.cyan} />
             <span style={{textAlign: 'right', fontFamily: font.mono, fontSize: 30, fontWeight: 700, color: color.ink}}>
