@@ -2,25 +2,36 @@ import {BEAT} from './theme';
 
 /**
  * Single source of truth for the 15s spot. SCRIPT.md is the human-readable version of this table;
- * the animatic and the final composition both read their timing from here.
+ * every shot component reads its copy and timing from here, so copy edits happen in this file only.
  */
-export type Act = 'PROBLEM' | 'REFRAME' | 'PROOF' | 'AI' | 'RESOLVE';
+export type Act = 'BEFORE' | 'TURN' | 'AFTER' | 'AI' | 'ENDING';
+
+export type Tone = 'ink' | 'red' | 'green' | 'ai' | 'brand';
+/** Kinetic effect played on a segment after it is revealed; each one acts out the word's meaning. */
+export type Fx = 'stretch' | 'drop' | 'float';
+
+export type Seg = {
+  t: string;
+  tone?: Tone;
+  fx?: Fx;
+  /** Slot-machine roll: the segment starts as `from` and rolls into `t`. */
+  from?: string;
+};
 
 export type Shot = {
   id: string;
   act: Act;
   from: number;
   durationInFrames: number;
-  /** Feature index shown as a large outline numeral (01–04). */
+  /** Feature chip, e.g. "자동 녹화". */
+  label?: string;
   index?: string;
-  main: string;
-  /** Words inside `main` rendered in the accent color. */
-  accent?: string[];
+  /** Clock shown in the shot, HH:MM. */
+  clock?: string;
+  lines: Seg[][];
   sub?: string;
-  /** Background words for the task-storm shot. */
-  storm?: string[];
+  cta?: string;
   visual: string;
-  motion: string;
   sfx: string;
 };
 
@@ -29,180 +40,143 @@ const b = (beats: number) => beats * BEAT;
 export const SHOTS: Shot[] = [
   {
     id: 'S01',
-    act: 'PROBLEM',
+    act: 'BEFORE',
     from: b(0),
-    durationInFrames: b(2),
-    main: '원장님의 하루,',
-    visual: '완전한 블랙. 머리카락 굵기의 초침 한 줄이 화면 중앙을 360° 회전.',
-    motion: '글자별 블러→선명 스태거 리빌, 자간이 넓게 시작해 조여듦.',
-    sfx: '초침 틱. 저역 드론 페이드 인.',
+    durationInFrames: b(3),
+    clock: '23:40',
+    lines: [[{t: '수업은 끝났는데,'}], [{t: '하루는 '}, {t: '끝나지 않았다.', tone: 'red'}]],
+    visual:
+      '시계 23:40이 롤링 인. 두 번째 줄이 뜨는 순간 잡무 알림 카드(보강 일정, 녹화 업로드, 숙제 확인, 학부모 문자…)가 사방에서 쌓이고 시계 분 단위가 빨라짐. 카메라 푸시 인 + 셰이크 증가.',
+    sfx: '초침 틱 → 알림음이 겹겹이 쌓임',
   },
   {
     id: 'S02',
-    act: 'PROBLEM',
-    from: b(2),
-    durationInFrames: b(1),
-    main: '',
-    storm: ['보강 일정', '녹화 업로드', '출결 체크', '숙제 확인', '상담 기록', '카톡 답장', '진도 정리', '학부모 문자'],
-    visual: '잡무 단어들이 사방에서 2~3프레임 간격으로 꽂히며 겹겹이 쌓임. 코너의 디지털 시계 09:00 → 23:47 고속 롤링.',
-    motion: '방향 랜덤 슬램 인 + 모션 블러, 노이즈 기반 카메라 셰이크가 점점 강해짐.',
-    sfx: '틱 소리가 가속되며 라이저로 이어짐.',
+    act: 'BEFORE',
+    from: b(3),
+    durationInFrames: b(3),
+    lines: [[{t: '가르친 시간보다,'}], [{t: '챙긴 시간이 '}, {t: '더 길었다.', tone: 'red', fx: 'stretch'}]],
+    visual:
+      '"가르친 시간" 초록 막대는 짧게 멈추고, "챙긴 시간" 빨간 막대는 화면 밖까지 뻗어 나감. 카메라가 막대를 따라 패닝. "더 길었다"는 글자가 옆으로 늘어남.',
+    sfx: '막대가 늘어나는 상승음',
   },
   {
     id: 'S03',
-    act: 'PROBLEM',
-    from: b(3),
+    act: 'TURN',
+    from: b(6),
     durationInFrames: b(2),
-    main: '비효율로 새는 시간.',
-    accent: ['비효율'],
-    visual: '단어 더미가 중앙으로 빨려 들어가 "비효율"(레드) 한 단어로 압축. 이어 "로 새는 시간."이 타이핑.',
-    motion: '"비효율" RGB 분리 글리치. 마지막 박자에 "시간" 글자가 모래처럼 아래로 흘러내려(새는 시간) 화면 밖으로 빠짐.',
-    sfx: '글리치 버스트 → 서브 드롭.',
+    lines: [[{t: '회의용', tone: 'red'}, {t: ' 툴을 '}, {t: '내려놓았다.', fx: 'drop'}]],
+    visual: '화상회의 창(3×3 타일, 음소거 아이콘, 나가기 버튼)이 도미노처럼 쓰러지고 창 전체가 아래로 떨어짐. "내려놓았다" 글자도 아래로 가라앉음.',
+    sfx: '휘시 + 타일이 넘어가는 클릭음',
   },
   {
     id: 'S04',
-    act: 'REFRAME',
-    from: b(5),
+    act: 'TURN',
+    from: b(8),
     durationInFrames: b(2),
-    main: '수업은 회의가 아닙니다.',
-    accent: ['회의'],
-    visual: '3×3 화상회의 타일 그리드(회색 아바타, 음소거 아이콘, "회의 나가기" 툴바)가 원근감 있게 떠 있음. 특정 서비스 로고는 쓰지 않음.',
-    motion: '타일이 도미노처럼 순서대로 뒤로 넘어가며 사라지고 문장만 남음.',
-    sfx: '휘시 + 타일이 넘어가는 클릭음 연타.',
+    lines: [[{t: '교육', tone: 'green', from: '회의'}, {t: '용 툴, '}, {t: 'ClassIn', tone: 'brand'}, {t: '.'}]],
+    visual: '"회의"에 취소선 → 슬롯머신처럼 회의·화상·채팅을 지나 "교육"에 착지. 초록 링이 퍼지며 화면 전체가 밝고 따뜻한 톤으로 전환. ClassIn 워드마크가 빛을 받으며 와이프 인.',
+    sfx: '슬롯 회전 → 베이스 히트 ①',
   },
   {
     id: 'S05',
-    act: 'REFRAME',
-    from: b(7),
+    act: 'AFTER',
+    from: b(10),
     durationInFrames: b(2),
-    main: '교육용 툴, ClassIn.',
-    accent: ['교육용', 'ClassIn'],
-    visual: '"회의용"에 레드 취소선이 그어지고, 슬롯머신처럼 세로로 굴러 "교육용"(그린)에 착지. ClassIn 워드마크가 라이트 스윕과 함께 등장.',
-    motion: '슬롯 롤 플립(오버슛 스프링), 그린 플래시 프레임 1장, 워드마크 마스크 와이프.',
-    sfx: '슬롯 회전음 → 베이스 히트(첫 번째 큰 임팩트).',
+    label: '자동 녹화',
+    index: '01',
+    lines: [[{t: '녹화는'}], [{t: '저절로', tone: 'green'}, {t: ' 남고,'}]],
+    visual: 'REC 점 맥동, 칠판에 판서가 그려지고 타이머 00:59:58 → 01:00:00. "수업 종료"와 동시에 "녹화 완료 · 바로 다시보기" 토스트.',
+    sfx: '셔터 + 체크',
   },
   {
     id: 'S06',
-    act: 'PROOF',
-    from: b(9),
+    act: 'AFTER',
+    from: b(12),
     durationInFrames: b(2),
-    index: '01',
-    main: '자동 녹화',
-    sub: '수업 끝, 녹화도 끝.',
-    visual: '빨간 REC 점이 맥동, 타임코드 00:59:58 → 01:00:00. "녹화 완료 ✓" 칩이 튀어나오고 영상 카드가 라이브러리로 슬라이드.',
-    motion: '좌측 아웃라인 숫자 01 마스크 리빌, 키워드 가변폰트 굵기 100→900 모프. 다음 카드로 휩팬(가로 모션 블러).',
-    sfx: '셔터 클릭 + 체크 사운드.',
+    label: '보강 관리',
+    index: '02',
+    lines: [[{t: '보강은'}], [{t: '알아서', tone: 'green'}, {t: ' 챙겨지고,'}]],
+    visual: '출석부에서 민준이만 "결석". 오늘 수업 영상 카드가 점선 경로를 따라 날아가 꽂히고, 태그가 "보강 완료"로 뒤집힘.',
+    sfx: '휙 + 팝',
   },
   {
     id: 'S07',
-    act: 'PROOF',
-    from: b(11),
+    act: 'AFTER',
+    from: b(14),
     durationInFrames: b(2),
-    index: '02',
-    main: '보강 관리',
-    sub: '결석해도, 공백 없이.',
-    visual: '학생 칩에 빨간 "결석" 태그. 녹화본 재생 카드가 곡선 경로를 따라 날아와 꽂히고 태그가 그린 "보강 완료"로 뒤집힘.',
-    motion: '베지어 패스 이동(트레일 잔상), 태그 3D 플립. 휩팬 아웃.',
-    sfx: '휙 + 팝.',
+    label: '상세한 관리',
+    index: '03',
+    lines: [[{t: '아이마다'}], [{t: '기록', tone: 'green'}, {t: '이 쌓이고,'}]],
+    visual: '학생별 출석·과제·참여·이해도 표가 줄줄이 쏟아지고 막대와 숫자가 채워짐.',
+    sfx: '데이터 틱 연타',
   },
   {
     id: 'S08',
-    act: 'PROOF',
-    from: b(13),
+    act: 'AFTER',
+    from: b(16),
     durationInFrames: b(2),
-    index: '03',
-    main: '상세한 관리',
-    sub: '한 명 한 명, 기록으로.',
-    visual: '학생 행이 폭포처럼 쏟아지고 출석·과제·참여·이해도 바가 채워짐. 숫자 카운터 롤링.',
-    motion: '행 스태거 캐스케이드, 바 이징 필, 숫자 롤러. 휩팬 아웃.',
-    sfx: '데이터 틱 연타(하이햇과 싱크).',
+    label: '더 많은 아이들',
+    index: '04',
+    lines: [[{t: '더 많은 아이들', tone: 'green'}, {t: '을'}], [{t: '만났다.'}]],
+    visual: '학생 한 명의 타일에서 카메라가 끝없이 뒤로 빠지며 수백 명의 그리드가 됨. 마지막에 화이트로 번쩍.',
+    sfx: '라이저 정점 → 순간 무음',
   },
   {
     id: 'S09',
-    act: 'PROOF',
-    from: b(15),
-    durationInFrames: b(2),
-    index: '04',
-    main: '더 많은 아이들',
-    sub: '혼자서도, 충분히.',
-    visual: '학생 타일 1개 → 4 → 16 → 64개. 카메라가 끝없이 뒤로 빠지며 그리드가 화면을 가득 메움.',
-    motion: '무한 줌아웃(스케일 체인) + 그리드 셀 팝 인. 마지막 프레임에서 화이트로 번쩍.',
-    sfx: '상승 라이저 정점 → 순간 무음(드롭 직전 숨 고르기).',
+    act: 'AI',
+    from: b(18),
+    durationInFrames: b(3),
+    label: 'AI 강의평가',
+    lines: [[{t: 'AI', tone: 'ai'}, {t: '가 내 수업을 평가하고,'}]],
+    visual:
+      '"AI" 두 글자가 화면을 채우며 슬램(색 분리 + 방사형 섬광). 이어 수업 음성 파형을 스캔 라인이 훑고 레이더 차트가 그려지며 지표 태그가 팝: 발화 비율 · 질문 · 학생 참여 · 집중 구간.',
+    sfx: '드롭 (장르 전환) → 데이터 처리음',
   },
   {
     id: 'S10',
     act: 'AI',
-    from: b(17),
-    durationInFrames: b(1),
-    main: 'AI',
-    accent: ['AI'],
-    visual: '하드 컷 블랙. 화면을 꽉 채우는 "AI" 두 글자가 슬램.',
-    motion: '크로매틱 애버레이션 + 스타버스트 섬광 1회, 강한 카메라 펀치 인.',
-    sfx: '드롭. 비트 전환(하이브리드 트레일러 → 일렉트로닉).',
+    from: b(21),
+    durationInFrames: b(2),
+    label: 'AI 관리',
+    lines: [[{t: '관리는 '}, {t: '가벼워지고,', tone: 'ai', fx: 'float'}]],
+    visual: '흩어진 할 일 카드가 AI 스윕 한 번에 정렬되고 차례로 체크. AI 요약 말풍선이 타이핑됨. "가벼워지고"는 글자가 얇아지며 떠오름.',
+    sfx: '정렬 슉슉 + 체크 틱',
   },
   {
     id: 'S11',
     act: 'AI',
-    from: b(18),
-    durationInFrames: b(3),
-    main: 'AI 강의평가',
-    accent: ['AI'],
-    sub: '내 수업을, 데이터로 본다.',
-    visual: '수업 음성 파형이 흐르고 스캔 라인이 지나가며 HUD 태그가 팝: 발화 비율 · 질문 수 · 학생 참여 · 집중 구간. 레이더 차트가 그려짐.',
-    motion: 'SVG 패스 드로잉(레이더/파형), HUD 태그 타이핑, 스캔 라인 글로우(그린→시안 그라디언트).',
-    sfx: '데이터 처리음 + 스캔 스윕.',
+    from: b(23),
+    durationInFrames: b(2),
+    label: '강의 업그레이드',
+    lines: [[{t: '내 강의는'}], [{t: '계속 '}, {t: '업그레이드', tone: 'ai'}, {t: '된다.'}]],
+    visual: '버전 v1.0 → v2.0 → v3.0이 롤링하며 매번 더 굵어지고, 뒤로 성장 곡선이 치솟음.',
+    sfx: '업 스텝 3연타',
   },
   {
     id: 'S12',
-    act: 'AI',
-    from: b(21),
+    act: 'ENDING',
+    from: b(25),
     durationInFrames: b(2),
-    main: 'AI 관리',
-    accent: ['AI'],
-    sub: '관리는 가볍게, 더 정확하게.',
-    visual: '학생 카드들이 AI에 의해 자동 정렬되고, 카드마다 요약 리포트 문장이 자동으로 타이핑. 체크리스트가 스스로 체크됨.',
-    motion: '레이아웃 셔플(FLIP 애니메이션), 하이라이트 스윕, 체크 스태거.',
-    sfx: '정렬 슉슉 + 체크 틱.',
+    clock: '22:00',
+    lines: [[{t: '수업이 끝나면,'}], [{t: '하루도 끝난다.', tone: 'green'}]],
+    visual: '오프닝의 시계가 23:58에서 22:00으로 되감김. 오프닝 문장("수업은 끝났는데, 하루는 끝나지 않았다")에 대한 대구.',
+    sfx: '리와인드 → 정적',
   },
   {
     id: 'S13',
-    act: 'AI',
-    from: b(23),
-    durationInFrames: b(2),
-    main: '내 강의, 계속 업그레이드.',
-    accent: ['업그레이드'],
-    visual: '버전 카운터 v1.0 → v2.0 → v3.0이 8분음표마다 갈아끼워지고, 뒤로 성장 곡선이 치솟음.',
-    motion: '숫자 슬롯 롤, 버전이 오를 때마다 글자 굵기·크기 업. 곡선 패스 드로잉 + 끝점 글로우.',
-    sfx: '업 스텝 3연타(음정 상승).',
-  },
-  {
-    id: 'S14',
-    act: 'RESOLVE',
-    from: b(25),
-    durationInFrames: b(2),
-    main: '혼자 가르쳐도, 혼자 관리하지 않는다.',
-    accent: ['혼자 관리하지 않는다'],
-    visual: '앞서 나온 키워드(자동 녹화·보강 관리·상세한 관리·AI 강의평가·업그레이드)가 초고속 몽타주로 중앙에 수렴한 뒤 태그라인으로 정리.',
-    motion: '스피드 램프 + 카메라 모션 블러, 단어 단위 리빌.',
-    sfx: '리버스 심벌 → 정지.',
-  },
-  {
-    id: 'S15',
-    act: 'RESOLVE',
+    act: 'ENDING',
     from: b(27),
     durationInFrames: b(3),
-    main: 'ClassIn',
+    lines: [[{t: 'ClassIn', tone: 'brand'}]],
     sub: '1인 원장을 위한 교육용 수업 플랫폼',
-    visual: '태그라인이 위로 작아지며 올라가고 ClassIn 로고가 라이트 리크와 함께 등장. 하단 CTA 버튼 "지금 무료 체험하기".',
-    motion: '로고 라이트 스윕, 라이트 리크 오버레이, CTA 스프링 팝.',
-    sfx: '마지막 히트 + 잔향, 0.5초 무음으로 끝.',
+    cta: '지금 무료 체험하기',
+    visual: '문장이 위로 올라가고 ClassIn 워드마크가 빛 스윕과 함께 등장, 라이트 리크, CTA 버튼 팝.',
+    sfx: '마지막 히트 ② + 잔향',
   },
 ];
 
-export const ACT_LABEL: Record<Act, string> = {
-  PROBLEM: 'ACT 1 · 문제',
-  REFRAME: 'ACT 2 · 전환',
-  PROOF: 'ACT 3 · 증명',
-  AI: 'ACT 4 · AI',
-  RESOLVE: 'ACT 5 · 해답',
+export const getShot = (id: string): Shot => {
+  const shot = SHOTS.find((s) => s.id === id);
+  if (!shot) throw new Error(`Unknown shot ${id}`);
+  return shot;
 };
